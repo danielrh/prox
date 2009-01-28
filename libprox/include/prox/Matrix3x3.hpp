@@ -31,7 +31,7 @@
  */
 #ifndef _MATRIX3X3_HPP_
 #define _MATRIX3X3_HPP_
-namespace Sirikata {
+namespace Prox {
 class COLUMNS{};
 class ROWS{};
 

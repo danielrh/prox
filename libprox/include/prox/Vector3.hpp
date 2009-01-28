@@ -32,7 +32,7 @@
 #ifndef _SIRIKATA_VECTOR3_HPP_
 #define _SIRIKATA_VECTOR3_HPP_
 #include <assert.h>
-namespace Sirikata {
+namespace Prox {
 template <typename scalar> class Vector3 {
 public:
     typedef scalar real;

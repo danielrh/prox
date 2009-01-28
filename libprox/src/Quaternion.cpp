@@ -34,7 +34,7 @@
 #include <prox/Quaternion.hpp>
 #include <cmath>
 #include <prox/Matrix3x3.hpp>
-namespace Sirikata {
+namespace Prox {
 Quaternion::Quaternion(const Vector3<Quaternion::scalar>&axis, Quaternion::scalar angle) {
         float sinHalfAngle=sin(angle*.5);
         x=sinHalfAngle*axis.x;

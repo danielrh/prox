@@ -33,7 +33,7 @@
 #ifndef _SIRIKATA_VECTOR4_HPP_
 #define _SIRIKATA_VECTOR4_HPP_
 
-namespace Sirikata {
+namespace Prox {
 template <typename scalar> class Vector3;
 
 template <typename scalar> class Vector4 {

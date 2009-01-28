@@ -33,7 +33,7 @@
 #define _QUATERNION_HPP_
 #include <prox/Vector3.hpp>
 #include <prox/Vector4.hpp>
-namespace Sirikata {
+namespace Prox {
 class Quaternion:public Vector4<float> {
 public:
     typedef float scalar;
