@@ -33,11 +33,15 @@
 #ifndef _SIRIKATA_VECTOR4_HPP_
 #define _SIRIKATA_VECTOR4_HPP_
 
+#include <prox/Platform.hpp>
+#include <sstream>
+
 namespace Prox {
 template <typename scalar> class Vector3;
 
 template <typename scalar> class Vector4 {
 public:
+    static const uint8 size = 4;
     typedef scalar real;
     union {
         struct {
@@ -53,6 +57,9 @@ public:
         this->y=y;
         this->z=z;
         this->w=w;
+    }
+    explicit Vector4(scalar v) {
+        x = v; y = v; z = v; w = v;
     }
     Vector4(){}
     template<class T>T convert(const T*ptr=NULL) const{

@@ -31,10 +31,16 @@
  */
 #ifndef _SIRIKATA_VECTOR3_HPP_
 #define _SIRIKATA_VECTOR3_HPP_
+
+#include <prox/Platform.hpp>
 #include <assert.h>
+#include <sstream>
+#include <cmath>
+
 namespace Prox {
 template <typename scalar> class Vector3 {
 public:
+    static const uint8 size = 3;
     typedef scalar real;
     union {
         struct {
@@ -48,6 +54,9 @@ public:
         this->x=x;
         this->y=y;
         this->z=z;
+    }
+    explicit Vector3(scalar v) {
+        x = v; y = v; z = v;
     }
     template <class V> explicit Vector3(const V&other) {
         x=other[0];
