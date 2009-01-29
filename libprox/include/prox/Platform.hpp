@@ -1,10 +1,9 @@
 #ifndef _PLATFORM_HPP_
 #define _PLATFORM_HPP_
 
-#define LIBPROX_PLATFORM_WINDOWS 0
-#define LIBPROX_PLATFORM_LINUX   1
-#define LIBPROX_PLATFORM_MAC     2
-#define LIBPROX_PLATFORM_BSD     3
+#define PLATFORM_WINDOWS 0
+#define PLATFORM_LINUX   1
+#define PLATFORM_MAC     2
 
 
 #if defined(__WIN32__) || defined(_WIN32)
