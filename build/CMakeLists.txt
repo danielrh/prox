@@ -120,36 +120,15 @@ INCLUDE_DIRECTORIES(BEFORE ${LIBPROX_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 
 #source files
 SET(LIBPROX_SOURCES
+  ${LIBPROX_SOURCE_DIR}/ArcAngle.cpp
   ${LIBPROX_SOURCE_DIR}/Quaternion.cpp
+  ${LIBPROX_SOURCE_DIR}/SolidAngle.cpp
 )
 
 
 SET(PROXSIM_SOURCES
   ${PROXSIM_SOURCE_DIR}/main.cpp
 )
-
-
-#linker flags
-SET(CMAKE_DEBUG_POSTFIX "_d")
-#SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} /usr/local)
-#SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/local)
-#SET(LIBPROX_LIBRARIES
-#  ${Boost_LIBRARIES}
-#)
-
-
-
-# get the name of the binaries
-#GET_PROPERTY(TEST_BINARY TARGET tests PROPERTY OUTPUT_NAME) #NOT AVAILABLE IN cmake-2.4
-#IF (CMAKE_BUILD_TYPE MATCHES "[Rr][Ee][Ll]")
-#  SET(SIRIKATA_CORE_LIB sirikata-core_r)
-#  SET(TEST_BINARY tests_r)
-#  SET(SIRIKATA_BINARY sirikata_r)
-#ELSE()
-#  SET(SIRIKATA_CORE_LIB sirikata-core)
-#  SET(TEST_BINARY tests)
-#  SET(SIRIKATA_BINARY sirikata)
-#ENDIF()
 
 
 #libraries
