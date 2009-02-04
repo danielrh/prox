@@ -104,7 +104,8 @@ private:
 template<typename scalar>
 class Vector3;
 
-typedef BoundingBox< Vector3<float> > BoundingBox3f;
+typedef BoundingBox< Vector3<float32> > BoundingBox3f;
+typedef BoundingBox< Vector3<float64> > BoundingBox3d;
 
 } // namespace Prox
 

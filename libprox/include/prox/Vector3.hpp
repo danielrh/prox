@@ -216,5 +216,8 @@ template<typename scalar> inline std::ostream& operator <<(std::ostream& os, con
     return os;
 }
 
+typedef Vector3<float32> Vector3f;
+typedef Vector3<float64> Vector3d;
+
 }
 #endif

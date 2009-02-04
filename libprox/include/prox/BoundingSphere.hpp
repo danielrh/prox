@@ -78,7 +78,8 @@ private:
 template<typename scalar>
 class Vector3;
 
-typedef BoundingSphere< Vector3<float> > BoundingSphere3f;
+typedef BoundingSphere< Vector3<float32> > BoundingSphere3f;
+typedef BoundingSphere< Vector3<float64> > BoundingSphere3d;
 
 } // namespace Prox
 

@@ -211,6 +211,9 @@ template<typename scalar> inline std::ostream& operator <<(std::ostream& os, con
     return os;
 }
 
+typedef Vector4<float32> Vector4f;
+typedef Vector4<float64> Vector4d;
+
 }
 
 #endif //_SIRIKATA_VECTOR4_HPP_
