@@ -1,5 +1,5 @@
 /*  libprox
- *  QueryListener.hpp
+ *  QueryChangeListener.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,8 +30,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROX_QUERY_LISTENER_HPP_
-#define _PROX_QUERY_LISTENER_HPP_
+#ifndef _PROX_QUERY_CHANGE_LISTENER_HPP_
+#define _PROX_QUERY_CHANGE_LISTENER_HPP_
 
 #include <prox/Vector3.hpp>
 
@@ -39,16 +39,16 @@ namespace Prox {
 
 class Query;
 
-class QueryListener {
+class QueryChangeListener {
 public:
-    QueryListener() {}
-    virtual ~QueryListener() {}
+    QueryChangeListener() {}
+    virtual ~QueryChangeListener() {}
 
     virtual void queryCenterUpdated(Query* query, const Vector3f& old_center, const Vector3f& new_center) = 0;
     virtual void queryDeleted(const Query* query) = 0;
 
-}; // class QueryListener
+}; // class QueryChangeListener
 
 } // namespace Prox
 
-#endif //_PROX_QUERY_LISTENER_HPP_
+#endif //_PROX_QUERY_CHANGE_LISTENER_HPP_

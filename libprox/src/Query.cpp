@@ -31,7 +31,8 @@
  */
 
 #include <prox/Query.hpp>
-#include <prox/QueryListener.hpp>
+#include <prox/QueryChangeListener.hpp>
+#include <prox/QueryEventListener.hpp>
 #include <float.h>
 #include <algorithm>
 
@@ -42,7 +43,10 @@ const float Query::InfiniteRadius = FLT_MAX;
 Query::Query(const Vector3f& center, const SolidAngle& minAngle)
  : mCenter(center),
    mMinSolidAngle(minAngle),
-   mMaxRadius(InfiniteRadius)
+   mMaxRadius(InfiniteRadius),
+   mChangeListeners(),
+   mEventListener(NULL),
+   mNotified(false)
 {
 }
 
@@ -61,7 +65,7 @@ Query::Query(const Query& cpy)
 }
 
 Query::~Query() {
-    for(ListenerList::iterator it = mListeners.begin(); it != mListeners.end(); it++)
+    for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
         (*it)->queryDeleted(this);
 }
 
@@ -80,18 +84,53 @@ const float Query::radius() const {
 void Query::center(const Vector3f& new_center) {
     Vector3f old_center = mCenter;
     mCenter = new_center;
-    for(ListenerList::iterator it = mListeners.begin(); it != mListeners.end(); it++)
+    for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
         (*it)->queryCenterUpdated(this, old_center, new_center);
 }
 
-void Query::addListener(QueryListener* listener) {
-    mListeners.push_back(listener);
+void Query::addChangeListener(QueryChangeListener* listener) {
+    mChangeListeners.push_back(listener);
 }
 
-void Query::removeListener(QueryListener* listener) {
-    ListenerList::iterator it = std::find(mListeners.begin(), mListeners.end(), listener);
-    if (it != mListeners.end())
-        mListeners.erase(it);
+void Query::removeChangeListener(QueryChangeListener* listener) {
+    ChangeListenerList::iterator it = std::find(mChangeListeners.begin(), mChangeListeners.end(), listener);
+    if (it != mChangeListeners.end())
+        mChangeListeners.erase(it);
+}
+
+void Query::setEventListener(QueryEventListener* listener) {
+    mEventListener = listener;
+}
+
+void Query::pushEvent(const QueryEvent& evt) {
+    mEventQueue.push_back(evt);
+
+    notifyEventListeners();
+}
+
+void Query::pushEvents(std::deque<QueryEvent>& evts) {
+    while( !evts.empty() ) {
+        mEventQueue.push_back( evts.front() );
+        evts.pop_front();
+    }
+
+    notifyEventListeners();
+}
+
+void Query::popEvents(std::deque<QueryEvent>& evts) {
+    assert( evts.empty() );
+    mEventQueue.swap(evts);
+    mNotified = false;
+}
+
+void Query::notifyEventListeners() {
+    assert( !mEventQueue.empty() );
+
+    if (mNotified) return;
+
+    if (mEventListener != NULL)
+        mEventListener->queryHasEvents(this);
+    mNotified = true;
 }
 
 } // namespace Prox

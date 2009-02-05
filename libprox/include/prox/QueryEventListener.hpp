@@ -1,5 +1,5 @@
 /*  libprox
- *  Query.hpp
+ *  QueryEventListener.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,59 +30,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROX_QUERY_HPP_
-#define _PROX_QUERY_HPP_
+#ifndef _PROX_QUERY_EVENT_LISTENER_HPP_
+#define _PROX_QUERY_EVENT_LISTENER_HPP_
 
-#include <prox/Platform.hpp>
-#include <prox/SolidAngle.hpp>
 #include <prox/Vector3.hpp>
-#include <prox/QueryEvent.hpp>
 
 namespace Prox {
 
-class QueryChangeListener;
-class QueryEventListener;
+class Query;
 
-class Query {
+class QueryEventListener {
 public:
-    const static float InfiniteRadius;
+    QueryEventListener() {}
+    virtual ~QueryEventListener() {}
 
-    Query(const Vector3f& center, const SolidAngle& minAngle);
-    Query(const Vector3f& center, const SolidAngle& minAngle, float radius);
-    Query(const Query& cpy);
-    ~Query();
+    virtual void queryHasEvents(Query* query) = 0;
 
-    const Vector3f& center() const;
-    const SolidAngle& angle() const;
-    const float radius() const;
-
-    void center(const Vector3f& new_center);
-
-    void addChangeListener(QueryChangeListener* listener);
-    void removeChangeListener(QueryChangeListener* listener);
-
-    void setEventListener(QueryEventListener* listener);
-
-    void pushEvent(const QueryEvent& evt);
-    void pushEvents(std::deque<QueryEvent>& evts);
-    void popEvents(std::deque<QueryEvent>& evts);
-protected:
-    Query();
-    void notifyEventListeners();
-
-    Vector3f mCenter;
-    SolidAngle mMinSolidAngle;
-    float mMaxRadius;
-
-    typedef std::list<QueryChangeListener*> ChangeListenerList;
-    ChangeListenerList mChangeListeners;
-    QueryEventListener* mEventListener;
-
-    typedef std::deque<QueryEvent> EventQueue;
-    EventQueue mEventQueue;
-    bool mNotified; // whether we've notified event listeners of new events
-}; // class Query
+}; // class QueryEventListener
 
 } // namespace Prox
 
-#endif //_PROX_QUERY_HPP_
+#endif //_PROX_QUERY_EVENT_LISTENER_HPP_
