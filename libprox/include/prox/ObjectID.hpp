@@ -1,5 +1,5 @@
 /*  libprox
- *  QueryEvent.hpp
+ *  ObjectID.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
