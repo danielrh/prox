@@ -79,6 +79,10 @@ public:
         return mMax;
     }
 
+    const CoordType& center() const {
+        return mMin + (mMax - mMin) * .5;
+    }
+
     BoundingBox& mergeIn(const BoundingBox& rhs) {
         mMin = mMin.min(rhs.mMin);
         mMax = mMax.max(rhs.mMax);
