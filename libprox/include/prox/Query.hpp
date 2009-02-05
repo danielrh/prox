@@ -37,6 +37,7 @@
 #include <prox/SolidAngle.hpp>
 #include <prox/Vector3.hpp>
 #include <prox/QueryEvent.hpp>
+#include <boost/thread.hpp>
 
 namespace Prox {
 
@@ -81,6 +82,7 @@ protected:
     typedef std::deque<QueryEvent> EventQueue;
     EventQueue mEventQueue;
     bool mNotified; // whether we've notified event listeners of new events
+    boost::mutex mEventQueueMutex;
 }; // class Query
 
 } // namespace Prox

@@ -103,12 +103,16 @@ void Query::setEventListener(QueryEventListener* listener) {
 }
 
 void Query::pushEvent(const QueryEvent& evt) {
+    boost::mutex::scoped_lock lock(mEventQueueMutex);
+
     mEventQueue.push_back(evt);
 
     notifyEventListeners();
 }
 
 void Query::pushEvents(std::deque<QueryEvent>& evts) {
+    boost::mutex::scoped_lock lock(mEventQueueMutex);
+
     while( !evts.empty() ) {
         mEventQueue.push_back( evts.front() );
         evts.pop_front();
@@ -118,6 +122,8 @@ void Query::pushEvents(std::deque<QueryEvent>& evts) {
 }
 
 void Query::popEvents(std::deque<QueryEvent>& evts) {
+    boost::mutex::scoped_lock lock(mEventQueueMutex);
+
     assert( evts.empty() );
     mEventQueue.swap(evts);
     mNotified = false;
