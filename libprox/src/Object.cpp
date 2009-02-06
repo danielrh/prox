@@ -63,8 +63,12 @@ const Vector3f& Object::center() const {
     return mCenter;
 }
 
-const BoundingBox3f Object::bbox() const {
+const BoundingBox3f& Object::bbox() const {
     return mBBox;
+}
+
+BoundingBox3f Object::worldBBox() const {
+    return BoundingBox3f( mBBox.min() + mCenter, mBBox.max() + mCenter );
 }
 
 void Object::center(const Vector3f& new_center) {

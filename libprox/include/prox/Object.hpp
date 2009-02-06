@@ -49,7 +49,8 @@ public:
 
     const ObjectID& id() const;
     const Vector3f& center() const;
-    const BoundingBox3f bbox() const;
+    const BoundingBox3f& bbox() const;
+    BoundingBox3f worldBBox() const;
     void center(const Vector3f& new_center);
     void bbox(const BoundingBox3f& bb);
 
