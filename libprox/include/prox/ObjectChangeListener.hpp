@@ -45,6 +45,7 @@ public:
     ObjectChangeListener() {}
     virtual ~ObjectChangeListener() {}
 
+    virtual void objectCenterUpdated(Object* obj, const Vector3f& old_center, const Vector3f& new_center) = 0;
     virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb) = 0;
     virtual void objectDeleted(const Object* obj) = 0;
 

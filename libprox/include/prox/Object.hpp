@@ -43,12 +43,14 @@ class ObjectChangeListener;
 
 class Object {
 public:
-    Object(const ObjectID& id, const BoundingBox3f& bbox);
+    Object(const ObjectID& id, const Vector3f& c, const BoundingBox3f& bbox);
     Object(const Object& cpy);
     ~Object();
 
     const ObjectID& id() const;
+    const Vector3f& center() const;
     const BoundingBox3f bbox() const;
+    void center(const Vector3f& new_center);
     void bbox(const BoundingBox3f& bb);
 
     void addChangeListener(ObjectChangeListener* listener);
@@ -56,6 +58,7 @@ public:
 
 protected:
     ObjectID mID;
+    Vector3f mCenter;
     BoundingBox3f mBBox;
 
     typedef std::list<ObjectChangeListener*> ChangeListenerList;

@@ -36,14 +36,16 @@
 
 namespace Prox {
 
-Object::Object(const ObjectID& id, const BoundingBox3f& bbox)
+Object::Object(const ObjectID& id, const Vector3f& c, const BoundingBox3f& bbox)
  : mID(id),
+   mCenter(c),
    mBBox(bbox)
 {
 }
 
 Object::Object(const Object& cpy)
  : mID(cpy.mID),
+   mCenter(cpy.mCenter),
    mBBox(cpy.mBBox)
 {
 }
@@ -57,8 +59,19 @@ const ObjectID& Object::id() const {
     return mID;
 }
 
+const Vector3f& Object::center() const {
+    return mCenter;
+}
+
 const BoundingBox3f Object::bbox() const {
     return mBBox;
+}
+
+void Object::center(const Vector3f& new_center) {
+    Vector3f old_center = mCenter;
+    mCenter = new_center;
+    for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
+        (*it)->objectCenterUpdated(this, old_center, new_center);
 }
 
 void Object::bbox(const BoundingBox3f& newbb) {
