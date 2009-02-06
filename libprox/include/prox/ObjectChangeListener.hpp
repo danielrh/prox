@@ -1,5 +1,5 @@
 /*  libprox
- *  Object.hpp
+ *  ObjectChangeListener.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,41 +30,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROX_OBJECT_HPP_
-#define _PROX_OBJECT_HPP_
+#ifndef _PROX_OBJECT_CHANGE_LISTENER_HPP_
+#define _PROX_OBJECT_CHANGE_LISTENER_HPP_
 
-#include <prox/ObjectID.hpp>
 #include <prox/Vector3.hpp>
 #include <prox/BoundingBox.hpp>
 
 namespace Prox {
 
-class ObjectChangeListener;
+class Object;
 
-class Object {
+class ObjectChangeListener {
 public:
-    Object(const ObjectID& id, const BoundingBox3f& bbox);
-    Object(const Object& cpy);
-    ~Object();
+    ObjectChangeListener() {}
+    virtual ~ObjectChangeListener() {}
 
-    const ObjectID& id() const;
-    const BoundingBox3f bbox() const;
-    void bbox(const BoundingBox3f& bb);
+    virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb) = 0;
+    virtual void objectDeleted(const Object* obj) = 0;
 
-    void addChangeListener(ObjectChangeListener* listener);
-    void removeChangeListener(ObjectChangeListener* listener);
-
-protected:
-    ObjectID mID;
-    BoundingBox3f mBBox;
-
-    typedef std::list<ObjectChangeListener*> ChangeListenerList;
-    ChangeListenerList mChangeListeners;
-
-private:
-    Object();
-}; // class Object
+}; // class ObjectChangeListener
 
 } // namespace Prox
 
-#endif //_PROX_OBJECT_HPP_
+#endif //_PROX_OBJECT_CHANGE_LISTENER_HPP_

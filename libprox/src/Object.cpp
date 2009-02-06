@@ -1,5 +1,5 @@
 /*  libprox
- *  Object.hpp
+ *  Object.cpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,41 +30,59 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROX_OBJECT_HPP_
-#define _PROX_OBJECT_HPP_
-
-#include <prox/ObjectID.hpp>
-#include <prox/Vector3.hpp>
-#include <prox/BoundingBox.hpp>
+#include <prox/Object.hpp>
+#include <prox/ObjectChangeListener.hpp>
+#include <algorithm>
 
 namespace Prox {
 
-class ObjectChangeListener;
+Object::Object(const ObjectID& id, const BoundingBox3f& bbox)
+ : mID(id),
+   mBBox(bbox)
+{
+}
 
-class Object {
-public:
-    Object(const ObjectID& id, const BoundingBox3f& bbox);
-    Object(const Object& cpy);
-    ~Object();
+Object::Object(const Object& cpy)
+ : mID(cpy.mID),
+   mBBox(cpy.mBBox)
+{
+}
 
-    const ObjectID& id() const;
-    const BoundingBox3f bbox() const;
-    void bbox(const BoundingBox3f& bb);
+Object::~Object() {
+    for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
+        (*it)->objectDeleted(this);
+}
 
-    void addChangeListener(ObjectChangeListener* listener);
-    void removeChangeListener(ObjectChangeListener* listener);
+const ObjectID& Object::id() const {
+    return mID;
+}
 
-protected:
-    ObjectID mID;
-    BoundingBox3f mBBox;
+const BoundingBox3f Object::bbox() const {
+    return mBBox;
+}
 
-    typedef std::list<ObjectChangeListener*> ChangeListenerList;
-    ChangeListenerList mChangeListeners;
+void Object::bbox(const BoundingBox3f& newbb) {
+    BoundingBox3f oldbb = mBBox;
+    mBBox = newbb;
+    for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
+        (*it)->objectBoundingBoxUpdated(this, oldbb, newbb);
+}
 
-private:
-    Object();
-}; // class Object
+void Object::addChangeListener(ObjectChangeListener* listener) {
+    assert(listener != NULL);
+    assert(std::find(mChangeListeners.begin(), mChangeListeners.end(), listener) != mChangeListeners.end());
+
+    mChangeListeners.push_back(listener);
+}
+
+void Object::removeChangeListener(ObjectChangeListener* listener) {
+    assert(listener != NULL);
+
+    ChangeListenerList::iterator it = std::find(mChangeListeners.begin(), mChangeListeners.end(), listener);
+    if (it == mChangeListeners.end())
+        return;
+
+    mChangeListeners.erase(it);
+}
 
 } // namespace Prox
-
-#endif //_PROX_OBJECT_HPP_
