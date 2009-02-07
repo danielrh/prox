@@ -61,6 +61,8 @@ void glut_timer(int val) {
 GLRenderer::GLRenderer(Simulator* sim)
  : Renderer(sim)
 {
+    mSimulator->addListener(this);
+
     assert(GLRenderer_sRenderer == NULL);
     GLRenderer_sRenderer = this;
 
@@ -77,6 +79,7 @@ GLRenderer::GLRenderer(Simulator* sim)
 }
 
 GLRenderer::~GLRenderer() {
+    mSimulator->removeListener(this);
     GLRenderer_sRenderer = NULL;
 }
 
@@ -85,13 +88,56 @@ void GLRenderer::run() {
     glutMainLoop();
 }
 
+void GLRenderer::queryHasEvents(Query* query) {
+    std::deque<QueryEvent> evts;
+    query->popEvents(evts);
+
+    for(std::deque<QueryEvent>::iterator it = evts.begin(); it != evts.end(); it++) {
+        if (mSeenObjects.find(it->id()) == mSeenObjects.end())
+            mSeenObjects.insert(it->id());
+    }
+}
+
+void GLRenderer::simulatorAddedObject(Object* obj) {
+    // nothing, we draw directly from the iterators in the simulator
+}
+
+void GLRenderer::simulatorRemovedObject(Object* obj) {
+    // nothing, we draw directly from the iterators in the simulator
+}
+
+void GLRenderer::simulatorAddedQuery(Query* query) {
+    query->setEventListener(this);
+}
+
+void GLRenderer::simulatorRemovedQuery(Query* query) {
+    query->setEventListener(NULL);
+}
+
+
 void GLRenderer::display() {
     glClear( GL_COLOR_BUFFER_BIT );
 
     for(Simulator::ObjectIterator it = mSimulator->objectsBegin(); it != mSimulator->objectsEnd(); it++) {
         Object* obj = *it;
         BoundingBox3f bb = obj->worldBBox();
+
+        if (mSeenObjects.find(obj->id()) != mSeenObjects.end())
+            glColor3f(1.f, 1.f, 1.f);
+        else
+            glColor3f(0.f, 0.f, 0.f);
+
         drawbb(bb);
+    }
+
+    glColor3f(1.f, 0.f, 0.f);
+    for(Simulator::QueryIterator it = mSimulator->queriesBegin(); it != mSimulator->queriesEnd(); it++) {
+        Query* query = *it;
+        Vector3f center = query->center();
+        glPushMatrix();
+        glTranslatef(center.x, center.y, center.z);
+        glutSolidSphere(1.f, 10, 10);
+        glPopMatrix();
     }
 
     glutSwapBuffers();
@@ -115,6 +161,7 @@ void GLRenderer::reshape(int w, int h) {
 void GLRenderer::timer() {
     mSimulator->tick();
     glutTimerFunc(16, glut_timer, 0);
+    glutPostRedisplay();
 }
 
 void GLRenderer::keyboard(unsigned char key, int x, int y) {

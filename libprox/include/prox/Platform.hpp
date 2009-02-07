@@ -77,6 +77,7 @@
 #include <list>
 #include <vector>
 #include <deque>
+#include <set>
 
 namespace Prox {
 

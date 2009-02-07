@@ -35,6 +35,8 @@
 
 #include <prox/Object.hpp>
 #include <prox/Query.hpp>
+#include <prox/QueryHandler.hpp>
+#include "SimulatorListener.hpp"
 
 namespace ProxSim {
 
@@ -43,8 +45,13 @@ private:
     typedef std::list<Prox::Object*> ObjectList;
     typedef std::list<Prox::Query*> QueryList;
 public:
-    Simulator(const Prox::BoundingBox3f& region, int nobjects, int nqueries);
+    Simulator(Prox::QueryHandler* handler);
     ~Simulator();
+
+    void initialize(const Prox::BoundingBox3f& region, int nobjects, int nqueries);
+
+    void addListener(SimulatorListener* listener);
+    void removeListener(SimulatorListener* listener);
 
     void tick();
 
@@ -57,9 +64,18 @@ public:
     QueryIterator queriesBegin();
     QueryIterator queriesEnd();
 private:
+    void addObject(Prox::Object* obj);
+    void removeObject(Prox::Object* obj);
+
+    void addQuery(Prox::Query* query);
+    void removeQuery(Prox::Query* query);
+
     Prox::int64 mObjectIDSource;
+    Prox::QueryHandler* mHandler;
     ObjectList mObjects;
     QueryList mQueries;
+    typedef std::list<SimulatorListener*> ListenerList;
+    ListenerList mListeners;
 }; // class Simulator
 
 } // namespace ProxSim

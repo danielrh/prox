@@ -31,6 +31,7 @@
  */
 
 #include "Simulator.hpp"
+#include <algorithm>
 
 using namespace Prox;
 
@@ -40,48 +41,91 @@ static float randFloat() {
     return float(rand()) / RAND_MAX;
 }
 
-Simulator::Simulator(const BoundingBox3f& region, int nobjects, int nqueries)
- : mObjectIDSource(0)
+Simulator::Simulator(QueryHandler* handler)
+ : mObjectIDSource(0),
+   mHandler(handler)
 {
-    Vector3f region_min = region.min();
-    Vector3f region_extents = region.extents();
-
-    for(int i = 0; i < nobjects; i++) {
-        mObjects.push_back(
-            new Object(
-                ObjectID(mObjectIDSource++),
-                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
-                BoundingBox3f( Vector3f(-1, -1, -1), Vector3f(1, 1, 1))
-            )
-        );
-    }
-
-    for(int i = 0; i < nqueries; i++) {
-        mQueries.push_back(
-            new Query(
-                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
-                SolidAngle( SolidAngle::Max / 100 )
-            )
-        );
-    }
 }
 
 Simulator::~Simulator() {
     while(!mObjects.empty()) {
         Object* obj = mObjects.front();
+        removeObject(obj);
         delete obj;
-        mObjects.pop_front();
     }
 
     while(!mQueries.empty()) {
         Query* query = mQueries.front();
+        removeQuery(query);
         delete query;
-        mQueries.pop_front();
     }
 }
 
-void Simulator::tick() {
+void Simulator::initialize(const Prox::BoundingBox3f& region, int nobjects, int nqueries) {
+    Vector3f region_min = region.min();
+    Vector3f region_extents = region.extents();
 
+    for(int i = 0; i < nobjects; i++) {
+        Object* obj = new Object(
+            ObjectID(mObjectIDSource++),
+            region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
+            BoundingBox3f( Vector3f(-1, -1, -1), Vector3f(1, 1, 1))
+        );
+        addObject(obj);
+    }
+
+    for(int i = 0; i < nqueries; i++) {
+        Query* query = new Query(
+            region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
+            SolidAngle( SolidAngle::Max / 100 )
+        );
+        addQuery(query);
+    }
+}
+
+void Simulator::addListener(SimulatorListener* listener) {
+    assert( std::find(mListeners.begin(), mListeners.end(), listener) == mListeners.end() );
+    mListeners.push_back(listener);
+}
+
+void Simulator::removeListener(SimulatorListener* listener) {
+    ListenerList::iterator it = std::find(mListeners.begin(), mListeners.end(), listener);
+    assert( it != mListeners.end() );
+    mListeners.erase(it);
+}
+
+void Simulator::tick() {
+    mHandler->tick();
+}
+
+void Simulator::addObject(Object* obj) {
+    mObjects.push_back(obj);
+    mHandler->registerObject(obj);
+    for(ListenerList::iterator it = mListeners.begin(); it != mListeners.end(); it++)
+        (*it)->simulatorAddedObject(obj);
+}
+
+void Simulator::removeObject(Object* obj) {
+    ObjectList::iterator it = std::find(mObjects.begin(), mObjects.end(), obj);
+    mObjects.erase(it);
+
+    for(ListenerList::iterator it = mListeners.begin(); it != mListeners.end(); it++)
+        (*it)->simulatorRemovedObject(obj);
+}
+
+void Simulator::addQuery(Query* query) {
+    mQueries.push_back(query);
+    mHandler->registerQuery(query);
+    for(ListenerList::iterator it = mListeners.begin(); it != mListeners.end(); it++)
+        (*it)->simulatorAddedQuery(query);
+}
+
+void Simulator::removeQuery(Query* query) {
+    QueryList::iterator it = std::find(mQueries.begin(), mQueries.end(), query);
+    mQueries.erase(it);
+
+    for(ListenerList::iterator it = mListeners.begin(); it != mListeners.end(); it++)
+        (*it)->simulatorRemovedQuery(query);
 }
 
 Simulator::ObjectIterator Simulator::objectsBegin() {

@@ -87,7 +87,7 @@ void Object::bbox(const BoundingBox3f& newbb) {
 
 void Object::addChangeListener(ObjectChangeListener* listener) {
     assert(listener != NULL);
-    assert(std::find(mChangeListeners.begin(), mChangeListeners.end(), listener) != mChangeListeners.end());
+    assert(std::find(mChangeListeners.begin(), mChangeListeners.end(), listener) == mChangeListeners.end());
 
     mChangeListeners.push_back(listener);
 }

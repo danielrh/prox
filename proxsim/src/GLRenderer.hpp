@@ -35,16 +35,30 @@
 
 #include "Renderer.hpp"
 #include <prox/BoundingBox.hpp>
+#include <prox/QueryEventListener.hpp>
+#include <prox/ObjectID.hpp>
+#include "SimulatorListener.hpp"
 
 namespace ProxSim {
 
-class GLRenderer : public Renderer {
+class GLRenderer : public Renderer, public Prox::QueryEventListener, public SimulatorListener {
 public:
     GLRenderer(Simulator* sim);
     virtual ~GLRenderer();
 
+    // Renderer Interface
     virtual void run();
 
+    // QueryEventListener Interface
+    virtual void queryHasEvents(Prox::Query* query);
+
+    // SimulatorListener Interface
+    virtual void simulatorAddedObject(Prox::Object* obj);
+    virtual void simulatorRemovedObject(Prox::Object* obj);
+    virtual void simulatorAddedQuery(Prox::Query* query);
+    virtual void simulatorRemovedQuery(Prox::Query* query);
+
+    // GLRenderer Interface
     void display();
     void reshape(int w, int h);
     void timer();
@@ -54,6 +68,8 @@ protected:
     GLRenderer();
 
     void drawbb(const Prox::BoundingBox3f& bb);
+
+    std::set<Prox::ObjectID> mSeenObjects;
 }; // class Renderer
 
 } // namespace ProxSim

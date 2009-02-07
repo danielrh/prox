@@ -1,5 +1,5 @@
-/*  proxsim
- *  main.cpp
+/*  libprox
+ *  BruteForceQueryHandler.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,26 +30,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Simulator.hpp"
-#include "GLRenderer.hpp"
-#include <prox/BruteForceQueryHandler.hpp>
+#ifndef _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
+#define _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
 
-#include <iostream>
+#include <prox/QueryHandler.hpp>
+#include <prox/ObjectChangeListener.hpp>
+#include <prox/QueryChangeListener.hpp>
 
-int main(int argc, char** argv) {
-    using namespace Prox;
-    using namespace ProxSim;
+namespace Prox {
 
-    QueryHandler* handler = new BruteForceQueryHandler();
-    Simulator* simulator = new Simulator(handler);
-    Renderer* renderer = new GLRenderer(simulator);
+class BruteForceQueryHandler : public QueryHandler, public ObjectChangeListener, public QueryChangeListener {
+public:
+    BruteForceQueryHandler();
+    virtual ~BruteForceQueryHandler();
 
-    simulator->initialize(BoundingBox3f( Vector3f(-100.f, -100.f, -100.f), Vector3f(100.f, 100.f, 100.f) ), 100, 5);
+    virtual void registerObject(Object* obj);
+    virtual void registerQuery(Query* query);
+    virtual void tick();
 
-    renderer->run();
+    // ObjectChangeListener Implementation
+    virtual void objectCenterUpdated(Object* obj, const Vector3f& old_center, const Vector3f& new_center);
+    virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb);
+    virtual void objectDeleted(const Object* obj);
 
-    delete renderer;
-    delete simulator;
+    // QueryChangeListener Implementation
+    virtual void queryCenterUpdated(Query* query, const Vector3f& old_center, const Vector3f& new_center);
+    virtual void queryDeleted(const Query* query);
 
-    return 0;
-}
+private:
+    struct QueryState {
+    };
+
+    typedef std::set<Object*> ObjectSet;
+    typedef std::map<Query*, QueryState*> QueryMap;
+
+    ObjectSet mObjects;
+    QueryMap mQueries;
+}; // class BruteForceQueryHandler
+
+} // namespace Prox
+
+#endif //_PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_

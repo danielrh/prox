@@ -1,5 +1,5 @@
-/*  proxsim
- *  main.cpp
+/*  libprox
+ *  QueryHandler.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,26 +30,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Simulator.hpp"
-#include "GLRenderer.hpp"
-#include <prox/BruteForceQueryHandler.hpp>
+#ifndef _PROX_QUERY_HANDLER_HPP_
+#define _PROX_QUERY_HANDLER_HPP_
 
-#include <iostream>
+#include <prox/Object.hpp>
+#include <prox/Query.hpp>
 
-int main(int argc, char** argv) {
-    using namespace Prox;
-    using namespace ProxSim;
+namespace Prox {
 
-    QueryHandler* handler = new BruteForceQueryHandler();
-    Simulator* simulator = new Simulator(handler);
-    Renderer* renderer = new GLRenderer(simulator);
+class QueryHandler {
+public:
+    QueryHandler() {}
+    virtual ~QueryHandler() {}
 
-    simulator->initialize(BoundingBox3f( Vector3f(-100.f, -100.f, -100.f), Vector3f(100.f, 100.f, 100.f) ), 100, 5);
+    virtual void registerObject(Object* obj) = 0;
+    virtual void registerQuery(Query* query) = 0;
+    virtual void tick() = 0;
+}; // class QueryHandler
 
-    renderer->run();
+} // namespace Prox
 
-    delete renderer;
-    delete simulator;
-
-    return 0;
-}
+#endif //_PROX_QUERY_HANDLER_HPP_

@@ -103,22 +103,35 @@ void Query::setEventListener(QueryEventListener* listener) {
 }
 
 void Query::pushEvent(const QueryEvent& evt) {
-    boost::mutex::scoped_lock lock(mEventQueueMutex);
+    {
+        boost::mutex::scoped_lock lock(mEventQueueMutex);
 
-    mEventQueue.push_back(evt);
+        mEventQueue.push_back(evt);
 
-    notifyEventListeners();
+        if (mNotified) return;
+        mNotified = true;
+    }
+
+    if (mEventListener != NULL)
+        mEventListener->queryHasEvents(this);
 }
 
 void Query::pushEvents(std::deque<QueryEvent>& evts) {
-    boost::mutex::scoped_lock lock(mEventQueueMutex);
+    {
+        boost::mutex::scoped_lock lock(mEventQueueMutex);
 
-    while( !evts.empty() ) {
-        mEventQueue.push_back( evts.front() );
-        evts.pop_front();
+        while( !evts.empty() ) {
+            mEventQueue.push_back( evts.front() );
+            evts.pop_front();
+        }
+
+        if (mNotified) return;
+
+        mNotified = true;
     }
 
-    notifyEventListeners();
+    if (mEventListener != NULL)
+        mEventListener->queryHasEvents(this);
 }
 
 void Query::popEvents(std::deque<QueryEvent>& evts) {
@@ -127,16 +140,6 @@ void Query::popEvents(std::deque<QueryEvent>& evts) {
     assert( evts.empty() );
     mEventQueue.swap(evts);
     mNotified = false;
-}
-
-void Query::notifyEventListeners() {
-    assert( !mEventQueue.empty() );
-
-    if (mNotified) return;
-
-    if (mEventListener != NULL)
-        mEventListener->queryHasEvents(this);
-    mNotified = true;
 }
 
 } // namespace Prox

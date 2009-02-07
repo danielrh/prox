@@ -1,5 +1,5 @@
 /*  proxsim
- *  main.cpp
+ *  SimulatorListener.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,26 +30,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Simulator.hpp"
-#include "GLRenderer.hpp"
-#include <prox/BruteForceQueryHandler.hpp>
+#ifndef _PROXSIM_SIMULATOR_LISTENER_HPP_
+#define _PROXSIM_SIMULATOR_LISTENER_HPP_
 
-#include <iostream>
+#include <prox/Query.hpp>
+#include <prox/Object.hpp>
+namespace ProxSim {
 
-int main(int argc, char** argv) {
-    using namespace Prox;
-    using namespace ProxSim;
+class SimulatorListener {
+public:
+    SimulatorListener() {}
+    virtual ~SimulatorListener() {}
 
-    QueryHandler* handler = new BruteForceQueryHandler();
-    Simulator* simulator = new Simulator(handler);
-    Renderer* renderer = new GLRenderer(simulator);
+    virtual void simulatorAddedObject(Prox::Object* obj) = 0;
+    virtual void simulatorRemovedObject(Prox::Object* obj) = 0;
 
-    simulator->initialize(BoundingBox3f( Vector3f(-100.f, -100.f, -100.f), Vector3f(100.f, 100.f, 100.f) ), 100, 5);
+    virtual void simulatorAddedQuery(Prox::Query* query) = 0;
+    virtual void simulatorRemovedQuery(Prox::Query* query) = 0;
+}; // class SimulatorListener
 
-    renderer->run();
+} // namespace ProxSim
 
-    delete renderer;
-    delete simulator;
-
-    return 0;
-}
+#endif //_PROXSIM_SIMULATOR_LISTENER_HPP_
