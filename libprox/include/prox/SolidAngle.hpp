@@ -34,6 +34,7 @@
 #define _PROX_SOLID_ANGLE_HPP_
 
 #include <prox/ArcAngle.hpp>
+#include <prox/Vector3.hpp>
 
 namespace Prox {
 
@@ -51,8 +52,10 @@ public:
     /// Get the approximate radius of the region
     ArcAngle radius() const;
 
-    /// Get the solid angle represented by the circular area with the given radius
+    /// Get the solid angle represented by the circular area with the given angular radius
     static SolidAngle fromRadius(const ArcAngle& al);
+    /// Get the solid angle represented by the circular area with the given vector to its center and radius
+    static SolidAngle fromCenterRadius(const Vector3f& to_center, float radius);
 
     SolidAngle operator+(const SolidAngle& rhs) const;
     SolidAngle& operator+=(const SolidAngle& rhs);
@@ -65,6 +68,10 @@ public:
     SolidAngle operator/(float rhs) const;
     SolidAngle& operator/=(float rhs);
 
+    bool operator<(const SolidAngle& rhs) const;
+    bool operator==(const SolidAngle& rhs) const;
+
+    float asFloat() const;
 protected:
     static const float MinVal = 0.0f;
     static const float MaxVal = 4.0f * 3.14159f;

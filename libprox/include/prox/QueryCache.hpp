@@ -1,5 +1,5 @@
 /*  libprox
- *  BruteForceQueryHandler.hpp
+ *  QueryCache.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,46 +30,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
-#define _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
+#ifndef _PROX_QUERY_CACHE_HPP_
+#define _PROX_QUERY_CACHE_HPP_
 
-#include <prox/QueryHandler.hpp>
-#include <prox/ObjectChangeListener.hpp>
-#include <prox/QueryChangeListener.hpp>
-#include <prox/QueryCache.hpp>
+#include <prox/ObjectID.hpp>
+#include <prox/QueryEvent.hpp>
 
 namespace Prox {
 
-class BruteForceQueryHandler : public QueryHandler, public ObjectChangeListener, public QueryChangeListener {
+class QueryCache {
 public:
-    BruteForceQueryHandler();
-    virtual ~BruteForceQueryHandler();
+    QueryCache();
+    ~QueryCache();
 
-    virtual void registerObject(Object* obj);
-    virtual void registerQuery(Query* query);
-    virtual void tick();
+    void add(const ObjectID& id);
+    bool contains(const ObjectID& id);
+    void remove(const ObjectID& id);
 
-    // ObjectChangeListener Implementation
-    virtual void objectCenterUpdated(Object* obj, const Vector3f& old_center, const Vector3f& new_center);
-    virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb);
-    virtual void objectDeleted(const Object* obj);
-
-    // QueryChangeListener Implementation
-    virtual void queryCenterUpdated(Query* query, const Vector3f& old_center, const Vector3f& new_center);
-    virtual void queryDeleted(const Query* query);
-
+    void exchange(QueryCache& newcache, std::deque<QueryEvent>* changes);
 private:
-    struct QueryState {
-        QueryCache cache;
-    };
-
-    typedef std::set<Object*> ObjectSet;
-    typedef std::map<Query*, QueryState*> QueryMap;
-
-    ObjectSet mObjects;
-    QueryMap mQueries;
-}; // class BruteForceQueryHandler
+    typedef std::set<ObjectID> IDSet;
+    IDSet mObjects;
+}; // class QueryCache
 
 } // namespace Prox
 
-#endif //_PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
+#endif //_PROX_QUERY_CACHE_HPP_

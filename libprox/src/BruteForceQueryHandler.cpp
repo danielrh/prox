@@ -31,6 +31,7 @@
  */
 
 #include <prox/BruteForceQueryHandler.hpp>
+#include <prox/BoundingSphere.hpp>
 #include <cassert>
 
 namespace Prox {
@@ -66,13 +67,31 @@ void BruteForceQueryHandler::tick() {
     for(QueryMap::iterator query_it = mQueries.begin(); query_it != mQueries.end(); query_it++) {
         Query* query = query_it->first;
         QueryState* state = query_it->second;
+        QueryCache newcache;
 
         for(ObjectSet::iterator obj_it = mObjects.begin(); obj_it != mObjects.end(); obj_it++) {
             Object* obj = *obj_it;
 
-            if (query->radius() == Query::InfiniteRadius || (obj->center()-query->center()).dot(obj->center()-query->center()) < query->radius()*query->radius())
-                query->pushEvent( QueryEvent(QueryEvent::Added, obj->id()) );
+            // Must satisfy radius constraint
+            if (query->radius() != Query::InfiniteRadius && (obj->center()-query->center()).lengthSquared() < query->radius()*query->radius())
+                continue;
+
+            // Must satisfy solid angle constraint
+            BoundingSphere3f bs(obj->bbox());
+            Vector3f obj_pos = obj->center() + bs.center();
+            Vector3f to_obj = obj_pos - query->center();
+            SolidAngle solid_angle = SolidAngle::fromCenterRadius(to_obj, bs.radius());
+
+            if (solid_angle < query->angle())
+                continue;
+
+            newcache.add(obj->id());
         }
+
+        std::deque<QueryEvent> events;
+        state->cache.exchange(newcache, &events);
+
+        query->pushEvents(events);
     }
 }
 

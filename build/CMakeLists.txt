@@ -136,6 +136,7 @@ SET(LIBPROX_SOURCES
   ${LIBPROX_SOURCE_DIR}/Object.cpp
   ${LIBPROX_SOURCE_DIR}/Quaternion.cpp
   ${LIBPROX_SOURCE_DIR}/Query.cpp
+  ${LIBPROX_SOURCE_DIR}/QueryCache.cpp
   ${LIBPROX_SOURCE_DIR}/SolidAngle.cpp
 )
 

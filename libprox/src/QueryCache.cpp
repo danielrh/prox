@@ -1,5 +1,5 @@
 /*  libprox
- *  BruteForceQueryHandler.hpp
+ *  QueryCache.cpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,46 +30,55 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
-#define _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
-
-#include <prox/QueryHandler.hpp>
-#include <prox/ObjectChangeListener.hpp>
-#include <prox/QueryChangeListener.hpp>
 #include <prox/QueryCache.hpp>
+#include <algorithm>
 
 namespace Prox {
 
-class BruteForceQueryHandler : public QueryHandler, public ObjectChangeListener, public QueryChangeListener {
-public:
-    BruteForceQueryHandler();
-    virtual ~BruteForceQueryHandler();
+QueryCache::QueryCache() {
+}
 
-    virtual void registerObject(Object* obj);
-    virtual void registerQuery(Query* query);
-    virtual void tick();
+QueryCache::~QueryCache() {
+}
 
-    // ObjectChangeListener Implementation
-    virtual void objectCenterUpdated(Object* obj, const Vector3f& old_center, const Vector3f& new_center);
-    virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb);
-    virtual void objectDeleted(const Object* obj);
+void QueryCache::add(const ObjectID& id) {
+    assert( mObjects.find(id) == mObjects.end() );
+    mObjects.insert(id);
+}
 
-    // QueryChangeListener Implementation
-    virtual void queryCenterUpdated(Query* query, const Vector3f& old_center, const Vector3f& new_center);
-    virtual void queryDeleted(const Query* query);
+bool QueryCache::contains(const ObjectID& id) {
+    return (mObjects.find(id) != mObjects.end());
+}
 
-private:
-    struct QueryState {
-        QueryCache cache;
-    };
+void QueryCache::remove(const ObjectID& id) {
+    assert( mObjects.find(id) != mObjects.end() );
+    mObjects.erase(id);
+}
 
-    typedef std::set<Object*> ObjectSet;
-    typedef std::map<Query*, QueryState*> QueryMap;
+void QueryCache::exchange(QueryCache& newcache, std::deque<QueryEvent>* changes) {
+    if (changes != NULL) {
+        std::set<ObjectID> added_objs;
+        std::set_difference(
+            newcache.mObjects.begin(), newcache.mObjects.end(),
+            mObjects.begin(), mObjects.end(),
+            std::inserter(added_objs, added_objs.begin())
+        );
 
-    ObjectSet mObjects;
-    QueryMap mQueries;
-}; // class BruteForceQueryHandler
+        std::set<ObjectID> removed_objs;
+        std::set_difference(
+            mObjects.begin(), mObjects.end(),
+            newcache.mObjects.begin(), newcache.mObjects.end(),
+            std::inserter(removed_objs, removed_objs.begin())
+        );
+
+        for(std::set<ObjectID>::iterator it = added_objs.begin(); it != added_objs.end(); it++)
+            changes->push_back(QueryEvent(QueryEvent::Added, *it));
+
+        for(std::set<ObjectID>::iterator it = removed_objs.begin(); it != removed_objs.end(); it++)
+            changes->push_back(QueryEvent(QueryEvent::Removed, *it));
+    }
+
+    mObjects = newcache.mObjects;
+}
 
 } // namespace Prox
-
-#endif //_PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_

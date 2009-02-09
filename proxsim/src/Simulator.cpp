@@ -77,7 +77,7 @@ void Simulator::initialize(const Prox::BoundingBox3f& region, int nobjects, int 
     for(int i = 0; i < nqueries; i++) {
         Query* query = new Query(
             region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
-            SolidAngle( SolidAngle::Max / 100 )
+            SolidAngle( SolidAngle::Max / 10000 )
         );
         addQuery(query);
     }

@@ -58,12 +58,24 @@ SolidAngle::SolidAngle(const SolidAngle& rhs)
 SolidAngle::~SolidAngle() {
 }
 
+float SolidAngle::asFloat() const {
+    return mSolidAngle;
+}
+
 ArcAngle SolidAngle::radius() const {
     return ArcAngle( acos(1.0f - (mSolidAngle / (2.0f * Pi))) );
 }
 
 SolidAngle SolidAngle::fromRadius(const ArcAngle& al) {
     return SolidAngle( 2.0f * Pi * (1.0f - cos(al.asFloat())) );
+}
+
+SolidAngle SolidAngle::fromCenterRadius(const Vector3f& to_center, float radius) {
+    Vector3f ortho_to_obj = to_center.cross( Vector3f(1.f, 1.f, 1.f) ).normal(); // FIXME this could break in some cases
+    Vector3f to_bound = to_center + ortho_to_obj * radius;
+    Vector3f norm_to_center = to_center.normal();
+    to_bound.normalizeThis();
+    return SolidAngle( 2.0f * Pi * (1.0f - norm_to_center.dot(to_bound)) );
 }
 
 SolidAngle SolidAngle::operator+(const SolidAngle& rhs) const {
@@ -108,6 +120,14 @@ SolidAngle& SolidAngle::operator/=(float rhs) {
     mSolidAngle /= rhs;
     clamp();
     return *this;
+}
+
+bool SolidAngle::operator<(const SolidAngle& rhs) const {
+    return (mSolidAngle < rhs.mSolidAngle);
+}
+
+bool SolidAngle::operator==(const SolidAngle& rhs) const {
+    return (mSolidAngle == rhs.mSolidAngle);
 }
 
 void SolidAngle::clamp() {
