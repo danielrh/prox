@@ -40,8 +40,8 @@ namespace Prox {
 
 const float Query::InfiniteRadius = FLT_MAX;
 
-Query::Query(const Vector3f& center, const SolidAngle& minAngle)
- : mCenter(center),
+Query::Query(const MotionVector3f& pos, const SolidAngle& minAngle)
+ : mPosition(pos),
    mMinSolidAngle(minAngle),
    mMaxRadius(InfiniteRadius),
    mChangeListeners(),
@@ -50,15 +50,15 @@ Query::Query(const Vector3f& center, const SolidAngle& minAngle)
 {
 }
 
-Query::Query(const Vector3f& center, const SolidAngle& minAngle, float radius)
- : mCenter(center),
+Query::Query(const MotionVector3f& pos, const SolidAngle& minAngle, float radius)
+ : mPosition(pos),
    mMinSolidAngle(minAngle),
    mMaxRadius(radius)
 {
 }
 
 Query::Query(const Query& cpy)
- : mCenter(cpy.mCenter),
+ : mPosition(cpy.mPosition),
    mMinSolidAngle(cpy.mMinSolidAngle),
    mMaxRadius(cpy.mMaxRadius)
 {
@@ -69,8 +69,12 @@ Query::~Query() {
         (*it)->queryDeleted(this);
 }
 
-const Vector3f& Query::center() const {
-    return mCenter;
+const MotionVector3f& Query::position() const {
+    return mPosition;
+}
+
+Vector3f Query::position(const Time& t) const {
+    return mPosition.position(t);
 }
 
 const SolidAngle& Query::angle() const {
@@ -81,11 +85,11 @@ const float Query::radius() const {
     return mMaxRadius;
 }
 
-void Query::center(const Vector3f& new_center) {
-    Vector3f old_center = mCenter;
-    mCenter = new_center;
+void Query::position(const MotionVector3f& new_pos) {
+    MotionVector3f old_pos = mPosition;
+    mPosition = new_pos;
     for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
-        (*it)->queryCenterUpdated(this, old_center, new_center);
+        (*it)->queryPositionUpdated(this, old_pos, new_pos);
 }
 
 void Query::addChangeListener(QueryChangeListener* listener) {

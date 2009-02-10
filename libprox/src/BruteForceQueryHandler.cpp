@@ -63,7 +63,7 @@ void BruteForceQueryHandler::registerQuery(Query* query) {
     query->addChangeListener(this);
 }
 
-void BruteForceQueryHandler::tick() {
+void BruteForceQueryHandler::tick(const Time& t) {
     for(QueryMap::iterator query_it = mQueries.begin(); query_it != mQueries.end(); query_it++) {
         Query* query = query_it->first;
         QueryState* state = query_it->second;
@@ -73,13 +73,13 @@ void BruteForceQueryHandler::tick() {
             Object* obj = *obj_it;
 
             // Must satisfy radius constraint
-            if (query->radius() != Query::InfiniteRadius && (obj->center()-query->center()).lengthSquared() < query->radius()*query->radius())
+            if (query->radius() != Query::InfiniteRadius && (obj->position(t)-query->position(t)).lengthSquared() < query->radius()*query->radius())
                 continue;
 
             // Must satisfy solid angle constraint
             BoundingSphere3f bs(obj->bbox());
-            Vector3f obj_pos = obj->center() + bs.center();
-            Vector3f to_obj = obj_pos - query->center();
+            Vector3f obj_pos = obj->position(t) + bs.center();
+            Vector3f to_obj = obj_pos - query->position(t);
             SolidAngle solid_angle = SolidAngle::fromCenterRadius(to_obj, bs.radius());
 
             if (solid_angle < query->angle())
@@ -95,7 +95,7 @@ void BruteForceQueryHandler::tick() {
     }
 }
 
-void BruteForceQueryHandler::objectCenterUpdated(Object* obj, const Vector3f& old_center, const Vector3f& new_center) {
+void BruteForceQueryHandler::objectPositionUpdated(Object* obj, const MotionVector3f& old_pos, const MotionVector3f& new_pos) {
     // Nothing to be done, we use values directly from the object
 }
 
@@ -108,7 +108,7 @@ void BruteForceQueryHandler::objectDeleted(const Object* obj) {
     mObjects.erase(const_cast<Object*>(obj));
 }
 
-void BruteForceQueryHandler::queryCenterUpdated(Query* query, const Vector3f& old_center, const Vector3f& new_center) {
+void BruteForceQueryHandler::queryPositionUpdated(Query* query, const MotionVector3f& old_pos, const MotionVector3f& new_pos) {
     // Nothing to be done, we use values directly from the query
 }
 

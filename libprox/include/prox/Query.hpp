@@ -35,7 +35,7 @@
 
 #include <prox/Platform.hpp>
 #include <prox/SolidAngle.hpp>
-#include <prox/Vector3.hpp>
+#include <prox/MotionVector.hpp>
 #include <prox/QueryEvent.hpp>
 #include <boost/thread.hpp>
 
@@ -48,16 +48,17 @@ class Query {
 public:
     const static float InfiniteRadius;
 
-    Query(const Vector3f& center, const SolidAngle& minAngle);
-    Query(const Vector3f& center, const SolidAngle& minAngle, float radius);
+    Query(const MotionVector3f& pos, const SolidAngle& minAngle);
+    Query(const MotionVector3f& pos, const SolidAngle& minAngle, float radius);
     Query(const Query& cpy);
     ~Query();
 
-    const Vector3f& center() const;
+    const MotionVector3f& position() const;
+    Vector3f position(const Time& t) const;
     const SolidAngle& angle() const;
     const float radius() const;
 
-    void center(const Vector3f& new_center);
+    void position(const MotionVector3f& new_center);
 
     void addChangeListener(QueryChangeListener* listener);
     void removeChangeListener(QueryChangeListener* listener);
@@ -71,7 +72,7 @@ protected:
     Query();
     void notifyEventListeners();
 
-    Vector3f mCenter;
+    MotionVector3f mPosition;
     SolidAngle mMinSolidAngle;
     float mMaxRadius;
 

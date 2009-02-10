@@ -54,6 +54,7 @@ public:
     Duration operator-(const Time& rhs) const;
 
     bool operator<(const Time& rhs) const;
+    bool operator>(const Time& rhs) const;
     bool operator==(const Time& rhs) const;
 private:
     friend class Duration;

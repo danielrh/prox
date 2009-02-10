@@ -1,5 +1,5 @@
 /*  libprox
- *  BruteForceQueryHandler.hpp
+ *  MotionVector.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,46 +30,60 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
-#define _PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
+#ifndef _MOTION_VECTOR_HPP_
+#define _MOTION_VECTOR_HPP_
 
-#include <prox/QueryHandler.hpp>
-#include <prox/ObjectChangeListener.hpp>
-#include <prox/QueryChangeListener.hpp>
-#include <prox/QueryCache.hpp>
+#include <prox/Vector3.hpp>
+#include <prox/Time.hpp>
+#include <prox/Duration.hpp>
 
 namespace Prox {
 
-class BruteForceQueryHandler : public QueryHandler, public ObjectChangeListener, public QueryChangeListener {
+template<typename CoordType>
+class MotionVector {
 public:
-    BruteForceQueryHandler();
-    virtual ~BruteForceQueryHandler();
+    MotionVector(const Time& t, const CoordType& pos, const CoordType& vel)
+     : mTime(t), mStart(pos), mDirection(vel)
+    {
+    }
 
-    virtual void registerObject(Object* obj);
-    virtual void registerQuery(Query* query);
-    virtual void tick(const Time& t);
+    const Time& updateTime() const {
+        return mTime;
+    }
 
-    // ObjectChangeListener Implementation
-    virtual void objectPositionUpdated(Object* obj, const MotionVector3f& old_pos, const MotionVector3f& new_pos);
-    virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb);
-    virtual void objectDeleted(const Object* obj);
+    const CoordType& position() const {
+        return mStart;
+    }
 
-    // QueryChangeListener Implementation
-    virtual void queryPositionUpdated(Query* query, const MotionVector3f& old_pos, const MotionVector3f& new_pos);
-    virtual void queryDeleted(const Query* query);
+    CoordType position(const Duration& dt) const {
+        return mStart + mDirection * dt.seconds();
+    }
+
+    CoordType position(const Time& t) const {
+        return position(t - mTime);
+    }
+
+    const CoordType& velocity() const {
+        return mDirection;
+    }
+
+    void update(const Time& t, const CoordType& pos, const CoordType& vel) {
+        assert(t > mTime);
+        mTime = t;
+        mStart = pos;
+        mDirection = vel;
+    }
 
 private:
-    struct QueryState {
-        QueryCache cache;
-    };
+    MotionVector();
 
-    typedef std::set<Object*> ObjectSet;
-    typedef std::map<Query*, QueryState*> QueryMap;
+    Time mTime;
+    CoordType mStart;
+    CoordType mDirection;
+}; // class MotionVector
 
-    ObjectSet mObjects;
-    QueryMap mQueries;
-}; // class BruteForceQueryHandler
+typedef MotionVector<Vector3f> MotionVector3f;
 
 } // namespace Prox
 
-#endif //_PROX_BRUTE_FORCE_QUERY_HANDLER_HPP_
+#endif //_MOTION_VECTOR_HPP_

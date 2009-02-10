@@ -35,6 +35,7 @@
 
 #include <prox/Object.hpp>
 #include <prox/Query.hpp>
+#include <prox/Time.hpp>
 
 namespace Prox {
 
@@ -45,7 +46,7 @@ public:
 
     virtual void registerObject(Object* obj) = 0;
     virtual void registerQuery(Query* query) = 0;
-    virtual void tick() = 0;
+    virtual void tick(const Time& t) = 0;
 }; // class QueryHandler
 
 } // namespace Prox

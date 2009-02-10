@@ -36,6 +36,7 @@
 #include <prox/Object.hpp>
 #include <prox/Query.hpp>
 #include <prox/QueryHandler.hpp>
+#include <prox/Time.hpp>
 #include "SimulatorListener.hpp"
 
 namespace ProxSim {
@@ -48,12 +49,12 @@ public:
     Simulator(Prox::QueryHandler* handler);
     ~Simulator();
 
-    void initialize(const Prox::BoundingBox3f& region, int nobjects, int nqueries);
+    void initialize(const Prox::Time& t, const Prox::BoundingBox3f& region, int nobjects, int nqueries);
 
     void addListener(SimulatorListener* listener);
     void removeListener(SimulatorListener* listener);
 
-    void tick();
+    void tick(const Prox::Time& t);
 
     typedef ObjectList::iterator ObjectIterator;
     typedef QueryList::iterator QueryIterator;

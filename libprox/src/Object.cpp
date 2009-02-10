@@ -36,16 +36,16 @@
 
 namespace Prox {
 
-Object::Object(const ObjectID& id, const Vector3f& c, const BoundingBox3f& bbox)
+Object::Object(const ObjectID& id, const MotionVector3f& c, const BoundingBox3f& bbox)
  : mID(id),
-   mCenter(c),
+   mPosition(c),
    mBBox(bbox)
 {
 }
 
 Object::Object(const Object& cpy)
  : mID(cpy.mID),
-   mCenter(cpy.mCenter),
+   mPosition(cpy.mPosition),
    mBBox(cpy.mBBox)
 {
 }
@@ -59,23 +59,27 @@ const ObjectID& Object::id() const {
     return mID;
 }
 
-const Vector3f& Object::center() const {
-    return mCenter;
+const MotionVector3f& Object::position() const {
+    return mPosition;
+}
+
+Vector3f Object::position(const Time& t) const {
+    return mPosition.position(t);
 }
 
 const BoundingBox3f& Object::bbox() const {
     return mBBox;
 }
 
-BoundingBox3f Object::worldBBox() const {
-    return BoundingBox3f( mBBox.min() + mCenter, mBBox.max() + mCenter );
+BoundingBox3f Object::worldBBox(const Time& t) const {
+    return BoundingBox3f( mBBox.min() + mPosition.position(t), mBBox.max() + mPosition.position(t) );
 }
 
-void Object::center(const Vector3f& new_center) {
-    Vector3f old_center = mCenter;
-    mCenter = new_center;
+void Object::position(const MotionVector3f& new_pos) {
+    MotionVector3f old_pos = mPosition;
+    mPosition = new_pos;
     for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
-        (*it)->objectCenterUpdated(this, old_center, new_center);
+        (*it)->objectPositionUpdated(this, old_pos, new_pos);
 }
 
 void Object::bbox(const BoundingBox3f& newbb) {

@@ -59,7 +59,8 @@ void glut_timer(int val) {
 }
 
 GLRenderer::GLRenderer(Simulator* sim)
- : Renderer(sim)
+ : Renderer(sim),
+   mTime(0)
 {
     mSimulator->addListener(this);
 
@@ -120,7 +121,7 @@ void GLRenderer::display() {
 
     for(Simulator::ObjectIterator it = mSimulator->objectsBegin(); it != mSimulator->objectsEnd(); it++) {
         Object* obj = *it;
-        BoundingBox3f bb = obj->worldBBox();
+        BoundingBox3f bb = obj->worldBBox(mTime);
 
         if (mSeenObjects.find(obj->id()) != mSeenObjects.end())
             glColor3f(1.f, 1.f, 1.f);
@@ -133,7 +134,7 @@ void GLRenderer::display() {
     glColor3f(1.f, 0.f, 0.f);
     for(Simulator::QueryIterator it = mSimulator->queriesBegin(); it != mSimulator->queriesEnd(); it++) {
         Query* query = *it;
-        Vector3f center = query->center();
+        Vector3f center = query->position(mTime);
         glPushMatrix();
         glTranslatef(center.x, center.y, center.z);
         glutSolidSphere(1.f, 10, 10);
@@ -159,7 +160,8 @@ void GLRenderer::reshape(int w, int h) {
 }
 
 void GLRenderer::timer() {
-    mSimulator->tick();
+    mTime += Duration::milliseconds(static_cast<uint32>(10));
+    mSimulator->tick(mTime);
     glutTimerFunc(16, glut_timer, 0);
     glutPostRedisplay();
 }

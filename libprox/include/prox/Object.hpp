@@ -34,7 +34,7 @@
 #define _PROX_OBJECT_HPP_
 
 #include <prox/ObjectID.hpp>
-#include <prox/Vector3.hpp>
+#include <prox/MotionVector.hpp>
 #include <prox/BoundingBox.hpp>
 
 namespace Prox {
@@ -43,15 +43,16 @@ class ObjectChangeListener;
 
 class Object {
 public:
-    Object(const ObjectID& id, const Vector3f& c, const BoundingBox3f& bbox);
+    Object(const ObjectID& id, const MotionVector3f& c, const BoundingBox3f& bbox);
     Object(const Object& cpy);
     ~Object();
 
     const ObjectID& id() const;
-    const Vector3f& center() const;
+    const MotionVector3f& position() const;
+    Vector3f position(const Time& t) const;
     const BoundingBox3f& bbox() const;
-    BoundingBox3f worldBBox() const;
-    void center(const Vector3f& new_center);
+    BoundingBox3f worldBBox(const Time& t) const;
+    void position(const MotionVector3f& new_pos);
     void bbox(const BoundingBox3f& bb);
 
     void addChangeListener(ObjectChangeListener* listener);
@@ -59,7 +60,7 @@ public:
 
 protected:
     ObjectID mID;
-    Vector3f mCenter;
+    MotionVector3f mPosition;
     BoundingBox3f mBBox;
 
     typedef std::list<ObjectChangeListener*> ChangeListenerList;

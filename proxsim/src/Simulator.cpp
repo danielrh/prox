@@ -61,14 +61,18 @@ Simulator::~Simulator() {
     }
 }
 
-void Simulator::initialize(const Prox::BoundingBox3f& region, int nobjects, int nqueries) {
+void Simulator::initialize(const Time& t, const Prox::BoundingBox3f& region, int nobjects, int nqueries) {
     Vector3f region_min = region.min();
     Vector3f region_extents = region.extents();
 
     for(int i = 0; i < nobjects; i++) {
         Object* obj = new Object(
             ObjectID(mObjectIDSource++),
-            region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
+            MotionVector3f(
+                t,
+                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
+                Vector3f(randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f)
+            ),
             BoundingBox3f( Vector3f(-1, -1, -1), Vector3f(1, 1, 1))
         );
         addObject(obj);
@@ -76,7 +80,11 @@ void Simulator::initialize(const Prox::BoundingBox3f& region, int nobjects, int 
 
     for(int i = 0; i < nqueries; i++) {
         Query* query = new Query(
-            region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
+            MotionVector3f(
+                t,
+                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
+                Vector3f(randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f)
+            ),
             SolidAngle( SolidAngle::Max / 10000 )
         );
         addQuery(query);
@@ -94,8 +102,8 @@ void Simulator::removeListener(SimulatorListener* listener) {
     mListeners.erase(it);
 }
 
-void Simulator::tick() {
-    mHandler->tick();
+void Simulator::tick(const Time& t) {
+    mHandler->tick(t);
 }
 
 void Simulator::addObject(Object* obj) {

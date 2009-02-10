@@ -33,7 +33,7 @@
 #ifndef _PROX_QUERY_CHANGE_LISTENER_HPP_
 #define _PROX_QUERY_CHANGE_LISTENER_HPP_
 
-#include <prox/Vector3.hpp>
+#include <prox/MotionVector.hpp>
 
 namespace Prox {
 
@@ -44,7 +44,7 @@ public:
     QueryChangeListener() {}
     virtual ~QueryChangeListener() {}
 
-    virtual void queryCenterUpdated(Query* query, const Vector3f& old_center, const Vector3f& new_center) = 0;
+    virtual void queryPositionUpdated(Query* query, const MotionVector3f& old_pos, const MotionVector3f& new_pos) = 0;
     virtual void queryDeleted(const Query* query) = 0;
 
 }; // class QueryChangeListener

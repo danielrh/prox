@@ -37,6 +37,7 @@
 #include <prox/BoundingBox.hpp>
 #include <prox/QueryEventListener.hpp>
 #include <prox/ObjectID.hpp>
+#include <prox/Time.hpp>
 #include "SimulatorListener.hpp"
 
 namespace ProxSim {
@@ -69,6 +70,7 @@ protected:
 
     void drawbb(const Prox::BoundingBox3f& bb);
 
+    Prox::Time mTime;
     std::set<Prox::ObjectID> mSeenObjects;
 }; // class Renderer
 
