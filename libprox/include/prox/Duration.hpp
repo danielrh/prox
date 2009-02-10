@@ -45,6 +45,14 @@ public:
     Duration(const Duration& cpy);
     ~Duration();
 
+    static Duration seconds(float dt);
+    static Duration seconds(uint32 dt);
+    static Duration milliseconds(float dt);
+    static Duration milliseconds(uint32 dt);
+
+    float seconds() const;
+    float milliseconds() const;
+
     Duration operator+(const Duration& rhs) const;
     Duration& operator+=(const Duration& rhs);
 

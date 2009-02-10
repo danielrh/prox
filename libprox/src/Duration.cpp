@@ -48,6 +48,30 @@ Duration::Duration(const Duration& cpy)
 Duration::~Duration() {
 }
 
+Duration Duration::seconds(float dt) {
+    return Duration( static_cast<uint64>(dt * 1000000.f) );
+}
+
+Duration Duration::seconds(uint32 dt) {
+    return Duration( static_cast<uint64>(dt) * 1000000 );
+}
+
+Duration Duration::milliseconds(float dt) {
+    return Duration( static_cast<uint64>(dt * 1000.f) );
+}
+
+Duration Duration::milliseconds(uint32 dt) {
+    return Duration( static_cast<uint64>(dt) * 1000 );
+}
+
+float Duration::seconds() const {
+    return static_cast<float>(mMicrosecs) / 1000000.f;
+}
+
+float Duration::milliseconds() const {
+    return static_cast<float>(mMicrosecs) / 1000.f;
+}
+
 Duration Duration::operator+(const Duration& rhs) const {
     return Duration(mMicrosecs + rhs.mMicrosecs);
 }
