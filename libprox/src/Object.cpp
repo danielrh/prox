@@ -36,17 +36,17 @@
 
 namespace Prox {
 
-Object::Object(const ObjectID& id, const MotionVector3f& c, const BoundingBox3f& bbox)
+Object::Object(const ObjectID& id, const MotionVector3f& c, const BoundingSphere3f& bs)
  : mID(id),
    mPosition(c),
-   mBBox(bbox)
+   mBounds(bs)
 {
 }
 
 Object::Object(const Object& cpy)
  : mID(cpy.mID),
    mPosition(cpy.mPosition),
-   mBBox(cpy.mBBox)
+   mBounds(cpy.mBounds)
 {
 }
 
@@ -67,12 +67,12 @@ Vector3f Object::position(const Time& t) const {
     return mPosition.position(t);
 }
 
-const BoundingBox3f& Object::bbox() const {
-    return mBBox;
+const BoundingSphere3f& Object::bounds() const {
+    return mBounds;
 }
 
-BoundingBox3f Object::worldBBox(const Time& t) const {
-    return BoundingBox3f( mBBox.min() + mPosition.position(t), mBBox.max() + mPosition.position(t) );
+BoundingSphere3f Object::worldBounds(const Time& t) const {
+    return BoundingSphere3f( mBounds.center() + mPosition.position(t), mBounds.radius() );
 }
 
 void Object::position(const MotionVector3f& new_pos) {
@@ -82,11 +82,11 @@ void Object::position(const MotionVector3f& new_pos) {
         (*it)->objectPositionUpdated(this, old_pos, new_pos);
 }
 
-void Object::bbox(const BoundingBox3f& newbb) {
-    BoundingBox3f oldbb = mBBox;
-    mBBox = newbb;
+void Object::bounds(const BoundingSphere3f& new_bounds) {
+    BoundingSphere3f old_bounds = mBounds;
+    mBounds = new_bounds;
     for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
-        (*it)->objectBoundingBoxUpdated(this, oldbb, newbb);
+        (*it)->objectBoundingSphereUpdated(this, old_bounds, new_bounds);
 }
 
 void Object::addChangeListener(ObjectChangeListener* listener) {

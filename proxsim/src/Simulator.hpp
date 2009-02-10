@@ -37,6 +37,7 @@
 #include <prox/Query.hpp>
 #include <prox/QueryHandler.hpp>
 #include <prox/Time.hpp>
+#include <prox/BoundingBox.hpp>
 #include "SimulatorListener.hpp"
 
 namespace ProxSim {

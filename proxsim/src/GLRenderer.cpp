@@ -69,7 +69,7 @@ GLRenderer::GLRenderer(Simulator* sim)
 
     int argc = 0;
     glutInit( &argc, NULL );
-    glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE );
+    glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     glutInitWindowSize( 512, 512 );
 
     glutCreateWindow( "Proximity Simulation" );
@@ -117,11 +117,11 @@ void GLRenderer::simulatorRemovedQuery(Query* query) {
 
 
 void GLRenderer::display() {
-    glClear( GL_COLOR_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     for(Simulator::ObjectIterator it = mSimulator->objectsBegin(); it != mSimulator->objectsEnd(); it++) {
         Object* obj = *it;
-        BoundingBox3f bb = obj->worldBBox(mTime);
+        BoundingSphere3f bb = obj->worldBounds(mTime);
 
         if (mSeenObjects.find(obj->id()) != mSeenObjects.end())
             glColor3f(1.f, 1.f, 1.f);
@@ -146,15 +146,19 @@ void GLRenderer::display() {
 
 void GLRenderer::reshape(int w, int h) {
     glClearColor( .3, .3, .3, 1 );
+    glClearDepth(1.0);
 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
 
     glOrtho( -100, 100, -100, 100, -100, 100 );
+    glTranslatef(0.f, 0.f, 100.f);
     glViewport( 0, 0, w, h );
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
+
+    glEnable(GL_DEPTH_TEST);
 
     glutPostRedisplay();
 }
@@ -205,6 +209,15 @@ void GLRenderer::drawbb(const BoundingBox3f& bb) {
     glVertex3f ( bb.min().x,  bb.min().y,  bb.min().z);
 
     glEnd();
+}
+
+void GLRenderer::drawbs(const Prox::BoundingSphere3f& bs) {
+    Vector3f center = bs.center();
+    float radius = bs.radius();
+    glPushMatrix();
+    glTranslatef(center.x, center.y, center.z);
+    glutSolidSphere(radius, 10, 10);
+    glPopMatrix();
 }
 
 } // namespace ProxSim

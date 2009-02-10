@@ -39,6 +39,9 @@
 namespace Prox {
 
 template<typename CoordType>
+class BoundingBox;
+
+template<typename CoordType>
 class BoundingSphere {
 public:
     typedef typename CoordType::real real;

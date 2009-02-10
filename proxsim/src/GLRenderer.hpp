@@ -69,6 +69,7 @@ protected:
     GLRenderer();
 
     void drawbb(const Prox::BoundingBox3f& bb);
+    void drawbs(const Prox::BoundingSphere3f& bs);
 
     Prox::Time mTime;
     std::set<Prox::ObjectID> mSeenObjects;

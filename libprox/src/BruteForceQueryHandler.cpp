@@ -77,7 +77,7 @@ void BruteForceQueryHandler::tick(const Time& t) {
                 continue;
 
             // Must satisfy solid angle constraint
-            BoundingSphere3f bs(obj->bbox());
+            BoundingSphere3f bs = obj->bounds();
             Vector3f obj_pos = obj->position(t) + bs.center();
             Vector3f to_obj = obj_pos - query->position(t);
             SolidAngle solid_angle = SolidAngle::fromCenterRadius(to_obj, bs.radius());
@@ -99,7 +99,7 @@ void BruteForceQueryHandler::objectPositionUpdated(Object* obj, const MotionVect
     // Nothing to be done, we use values directly from the object
 }
 
-void BruteForceQueryHandler::objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb) {
+void BruteForceQueryHandler::objectBoundingSphereUpdated(Object* obj, const BoundingSphere3f& old_bounds, const BoundingSphere3f& new_bounds) {
     // Nothing to be done, we use values directly from the object
 }
 

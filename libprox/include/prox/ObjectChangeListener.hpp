@@ -34,7 +34,7 @@
 #define _PROX_OBJECT_CHANGE_LISTENER_HPP_
 
 #include <prox/MotionVector.hpp>
-#include <prox/BoundingBox.hpp>
+#include <prox/BoundingSphere.hpp>
 
 namespace Prox {
 
@@ -46,7 +46,7 @@ public:
     virtual ~ObjectChangeListener() {}
 
     virtual void objectPositionUpdated(Object* obj, const MotionVector3f& old_pos, const MotionVector3f& new_pos) = 0;
-    virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb) = 0;
+    virtual void objectBoundingSphereUpdated(Object* obj, const BoundingSphere3f& old_bounds, const BoundingSphere3f& new_bounds) = 0;
     virtual void objectDeleted(const Object* obj) = 0;
 
 }; // class ObjectChangeListener

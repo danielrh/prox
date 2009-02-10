@@ -70,7 +70,7 @@ void Simulator::initialize(const Time& t, const Prox::BoundingBox3f& region, int
             ObjectID(mObjectIDSource++),
             MotionVector3f(
                 t,
-                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
+                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), 0.f/*region_extents.z * randFloat()*/),
                 Vector3f(randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f)
             ),
             BoundingBox3f( Vector3f(-1, -1, -1), Vector3f(1, 1, 1))
@@ -82,10 +82,10 @@ void Simulator::initialize(const Time& t, const Prox::BoundingBox3f& region, int
         Query* query = new Query(
             MotionVector3f(
                 t,
-                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), region_extents.z * randFloat()),
-                Vector3f(randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f)
+                region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), 0.f/*region_extents.z * randFloat()*/),
+                Vector3f(randFloat() * 20.f - 10.f, randFloat() * 20.f - 10.f, 0.0f/*randFloat() * 2.f - 1.f*/)
             ),
-            SolidAngle( SolidAngle::Max / 10000 )
+            SolidAngle( SolidAngle::Max / 1000 )
         );
         addQuery(query);
     }

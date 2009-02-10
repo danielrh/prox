@@ -51,7 +51,7 @@ public:
 
     // ObjectChangeListener Implementation
     virtual void objectPositionUpdated(Object* obj, const MotionVector3f& old_pos, const MotionVector3f& new_pos);
-    virtual void objectBoundingBoxUpdated(Object* obj, const BoundingBox3f& oldbb, const BoundingBox3f& newbb);
+    virtual void objectBoundingSphereUpdated(Object* obj, const BoundingSphere3f& old_bounds, const BoundingSphere3f& new_bounds);
     virtual void objectDeleted(const Object* obj);
 
     // QueryChangeListener Implementation
