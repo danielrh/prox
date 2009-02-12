@@ -38,7 +38,7 @@ namespace Prox {
 
 struct RTreeNode {
 private:
-    static const uint8 ObjectsFlag = 0x02; // elements are object pointers instead of node pointers
+    static const uint8 LeafFlag = 0x02; // elements are object pointers instead of node pointers
 
     union {
         RTreeNode** nodes;
@@ -58,18 +58,18 @@ public:
         for(int i = 0; i < max_elements; i++)
             elements.magic[i] = NULL;
 
-        objects(true);
+        leaf(true);
     }
 
     ~RTreeNode() {
         delete[] elements.magic;
     }
 
-    bool objects() const {
-        return (flags & ObjectsFlag);
+    bool leaf() const {
+        return (flags & LeafFlag);
     }
-    void objects(bool d) {
-        flags = (flags & ~ObjectsFlag) | (d ? ObjectsFlag : 0x00);
+    void leaf(bool d) {
+        flags = (flags & ~LeafFlag) | (d ? LeafFlag : 0x00);
     }
 
     bool empty() const {
@@ -86,13 +86,13 @@ public:
     }
 
     Object* object(int i) const {
-        assert( objects() );
+        assert( leaf() );
         assert( i < count );
         return elements.objects[i];
     }
 
     RTreeNode* node(int i) const {
-        assert( !objects() );
+        assert( !leaf() );
         assert( i < count );
         return elements.nodes[i];
     }
@@ -108,13 +108,12 @@ public:
         count = 0;
         for(int i = 0; i < max_elements; i++)
             elements.magic[i] = NULL;
-        objects(false);
         bounding_sphere = BoundingSphere3f();
     }
 
     void insert(Object* obj, const Time& t) {
         assert (count < max_elements);
-        assert (objects() == true);
+        assert (leaf() == true);
         elements.objects[count] = obj;
         count++;
         bounding_sphere = bounding_sphere.merge(obj->worldBounds(t));
@@ -122,7 +121,7 @@ public:
 
     void insert(RTreeNode* node) {
         assert (count < max_elements);
-        assert (objects() == false);
+        assert (leaf() == false);
         elements.nodes[count] = node;
         count++;
         bounding_sphere = bounding_sphere.merge(node->bounds());
@@ -147,7 +146,7 @@ void RTree_split_node(RTreeNode* node, const Time& t) {
     }
 
     node->clear();
-    node->objects(false);
+    node->leaf(false);
     node->insert(left);
     node->insert(right);
 }
@@ -157,7 +156,7 @@ void RTree_insert_object(Object* obj, const Time& t, RTreeNode* root) {
     BoundingSphere3f obj_bounds = obj->worldBounds(t);
 
     while(true) {
-        if (node->objects()) {
+        if (node->leaf()) {
             if (!node->full()) {
                 node->insert(obj, t);
                 break;
@@ -185,7 +184,7 @@ void RTree_insert_object(Object* obj, const Time& t, RTreeNode* root) {
         if (min_increase_node == NULL ||
             (!node->full() && obj_bounds.volume() < min_increase) ) {
             RTreeNode* new_child = new RTreeNode(node->capacity());
-            new_child->objects(true);
+            new_child->leaf(true);
             new_child->insert(obj, t);
             node->insert(new_child);
             return;
@@ -199,15 +198,15 @@ void RTree_insert_object(Object* obj, const Time& t, RTreeNode* root) {
 
 void RTree_verify_bounds(RTreeNode* root, const Time& t) {
     for(int i = 0; i < root->size(); i++)
-//        if (root->bounds().merge(root->objects() ? root->object(i)->bounds() : root->node(i)->bounds()) != root->bounds())
-        if (!root->bounds().contains( root->objects() ? root->object(i)->worldBounds(t) : root->node(i)->bounds() )) {
-            const BoundingSphere3f& child_bs = root->objects() ? root->object(i)->worldBounds(t) : root->node(i)->bounds();
+//        if (root->bounds().merge(root->leaf() ? root->object(i)->bounds() : root->node(i)->bounds()) != root->bounds())
+        if (!root->bounds().contains( root->leaf() ? root->object(i)->worldBounds(t) : root->node(i)->bounds() )) {
+            const BoundingSphere3f& child_bs = root->leaf() ? root->object(i)->worldBounds(t) : root->node(i)->bounds();
             printf("child exceeds bounds %s %f\n",
-                (root->objects() ? "object" : "node"),
+                (root->leaf() ? "object" : "node"),
                 root->bounds().radius() - ((root->bounds().center() - child_bs.center()).length() + child_bs.radius())
             );
         }
-    if (!root->objects()) {
+    if (!root->leaf()) {
         for(int i = 0; i < root->size(); i++)
             RTree_verify_bounds(root->node(i), t);
     }
@@ -262,6 +261,8 @@ bool RTreeQueryHandler::satisfiesConstraints(const Vector3f& qpos, const float q
 
 void RTreeQueryHandler::tick(const Time& t) {
     //RTree_verify_bounds(mRTreeRoot, mLastTime);
+    int count = 0;
+    int ncount = 0;
     for(QueryMap::iterator query_it = mQueries.begin(); query_it != mQueries.end(); query_it++) {
         Query* query = query_it->first;
         QueryState* state = query_it->second;
@@ -277,19 +278,22 @@ void RTreeQueryHandler::tick(const Time& t) {
             RTreeNode* node = node_stack.top();
             node_stack.pop();
 
-            if (node->objects()) {
+            if (node->leaf()) {
                 for(int i = 0; i < node->size(); i++) {
+                    count++;
                     Object* obj = node->object(i);
-
                     if (satisfiesConstraints(qpos, qradius, qangle, obj->position(t), obj->bounds()))
                         newcache.add(obj->id());
                 }
             }
             else {
                 for(int i = 0; i < node->size(); i++) {
+                    count++;
                     RTreeNode* child = node->node(i);
                     if (satisfiesConstraints(qpos, qradius, qangle, Vector3f(0.0f, 0.0f, 0.0f), child->bounds()))
                         node_stack.push(child);
+                    else
+                        ncount++;
                 }
             }
         }
@@ -299,7 +303,7 @@ void RTreeQueryHandler::tick(const Time& t) {
 
         query->pushEvents(events);
     }
-
+    printf("count: %d %d\n", count, ncount);
     mLastTime = t;
 }
 
