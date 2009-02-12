@@ -1,5 +1,5 @@
 /*  proxsim
- *  GLRenderer.hpp
+ *  Timer.cpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,53 +30,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROXSIM_GLRENDERER_HPP_
-#define _PROXSIM_GLRENDERER_HPP_
-
-#include "Renderer.hpp"
-#include <prox/BoundingBox.hpp>
-#include <prox/QueryEventListener.hpp>
-#include <prox/ObjectID.hpp>
-#include <prox/Time.hpp>
-#include "SimulatorListener.hpp"
 #include "Timer.hpp"
+
+using namespace Prox;
 
 namespace ProxSim {
 
-class GLRenderer : public Renderer, public Prox::QueryEventListener, public SimulatorListener {
-public:
-    GLRenderer(Simulator* sim);
-    virtual ~GLRenderer();
+Timer::Timer() {
+}
 
-    // Renderer Interface
-    virtual void run();
+Timer::~Timer() {
+}
 
-    // QueryEventListener Interface
-    virtual void queryHasEvents(Prox::Query* query);
+void Timer::start() {
+    mStart = boost::posix_time::microsec_clock::local_time();
+}
 
-    // SimulatorListener Interface
-    virtual void simulatorAddedObject(Prox::Object* obj);
-    virtual void simulatorRemovedObject(Prox::Object* obj);
-    virtual void simulatorAddedQuery(Prox::Query* query);
-    virtual void simulatorRemovedQuery(Prox::Query* query);
+Time Timer::now() {
+    boost::posix_time::time_duration since_start = boost::posix_time::microsec_clock::local_time() - mStart;
+    return Time( since_start.total_microseconds() );
+}
 
-    // GLRenderer Interface
-    void display();
-    void reshape(int w, int h);
-    void timer();
-    void keyboard(unsigned char key, int x, int y);
+Duration Timer::elapsed() {
+    boost::posix_time::time_duration since_start = boost::posix_time::microsec_clock::local_time() - mStart;
+    return Duration( since_start.total_microseconds() );
+}
 
-protected:
-    GLRenderer();
-
-    void drawbb(const Prox::BoundingBox3f& bb);
-    void drawbs(const Prox::BoundingSphere3f& bs);
-
-    Prox::Time mTime;
-    std::set<Prox::ObjectID> mSeenObjects;
-    Timer mTimer;
-}; // class Renderer
 
 } // namespace ProxSim
-
-#endif //_PROXSIM_GLRENDERER_HPP_

@@ -1,5 +1,5 @@
 /*  proxsim
- *  GLRenderer.hpp
+ *  Timer.hpp
  *
  *  Copyright (c) 2009, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -30,53 +30,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PROXSIM_GLRENDERER_HPP_
-#define _PROXSIM_GLRENDERER_HPP_
+#ifndef _PROXSIM_TIMER_HPP_
+#define _PROXSIM_TIMER_HPP_
 
-#include "Renderer.hpp"
-#include <prox/BoundingBox.hpp>
-#include <prox/QueryEventListener.hpp>
-#include <prox/ObjectID.hpp>
 #include <prox/Time.hpp>
-#include "SimulatorListener.hpp"
-#include "Timer.hpp"
+#include <prox/Duration.hpp>
+#include <boost/date_time.hpp>
 
 namespace ProxSim {
 
-class GLRenderer : public Renderer, public Prox::QueryEventListener, public SimulatorListener {
+class Timer {
 public:
-    GLRenderer(Simulator* sim);
-    virtual ~GLRenderer();
+    Timer();
+    ~Timer();
 
-    // Renderer Interface
-    virtual void run();
+    void start();
+    Prox::Time now();
+    Prox::Duration elapsed();
 
-    // QueryEventListener Interface
-    virtual void queryHasEvents(Prox::Query* query);
-
-    // SimulatorListener Interface
-    virtual void simulatorAddedObject(Prox::Object* obj);
-    virtual void simulatorRemovedObject(Prox::Object* obj);
-    virtual void simulatorAddedQuery(Prox::Query* query);
-    virtual void simulatorRemovedQuery(Prox::Query* query);
-
-    // GLRenderer Interface
-    void display();
-    void reshape(int w, int h);
-    void timer();
-    void keyboard(unsigned char key, int x, int y);
-
-protected:
-    GLRenderer();
-
-    void drawbb(const Prox::BoundingBox3f& bb);
-    void drawbs(const Prox::BoundingSphere3f& bs);
-
-    Prox::Time mTime;
-    std::set<Prox::ObjectID> mSeenObjects;
-    Timer mTimer;
-}; // class Renderer
+private:
+    boost::posix_time::ptime mStart;
+}; // class Timer
 
 } // namespace ProxSim
 
-#endif //_PROXSIM_GLRENDERER_HPP_
+#endif //_PROXSIM_TIMER_HPP_
