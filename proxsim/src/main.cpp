@@ -33,6 +33,7 @@
 #include "Simulator.hpp"
 #include "GLRenderer.hpp"
 #include <prox/BruteForceQueryHandler.hpp>
+#include <prox/RTreeQueryHandler.hpp>
 
 #include <iostream>
 
@@ -40,7 +41,8 @@ int main(int argc, char** argv) {
     using namespace Prox;
     using namespace ProxSim;
 
-    QueryHandler* handler = new BruteForceQueryHandler();
+    //QueryHandler* handler = new BruteForceQueryHandler();
+    QueryHandler* handler = new RTreeQueryHandler(4);
     Simulator* simulator = new Simulator(handler);
     Renderer* renderer = new GLRenderer(simulator);
 

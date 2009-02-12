@@ -71,7 +71,7 @@ void Simulator::initialize(const Time& t, const Prox::BoundingBox3f& region, int
             MotionVector3f(
                 t,
                 region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), 0.f/*region_extents.z * randFloat()*/),
-                Vector3f(randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f, randFloat() * 2.f - 1.f)
+                Vector3f(randFloat() * 20.f - 10.f, randFloat() * 20.f - 10.f, randFloat() * 20.f - 10.f)
             ),
             BoundingBox3f( Vector3f(-1, -1, -1), Vector3f(1, 1, 1))
         );

@@ -78,6 +78,8 @@
 #include <vector>
 #include <deque>
 #include <set>
+#include <queue>
+#include <stack>
 
 namespace Prox {
 

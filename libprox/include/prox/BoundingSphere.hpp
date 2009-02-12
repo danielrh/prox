@@ -45,9 +45,10 @@ template<typename CoordType>
 class BoundingSphere {
 public:
     typedef typename CoordType::real real;
+    static const real Pi = 3.14159;
 
     BoundingSphere()
-     : mCenter(0),
+     : mCenter((real)0),
        mRadius(0)
     {
     }
@@ -72,6 +73,50 @@ public:
         return mRadius;
     }
 
+    BoundingSphere& mergeIn(const BoundingSphere& rhs) {
+        *this = merge(rhs);
+        return *this;
+    }
+
+    BoundingSphere merge(const BoundingSphere& rhs) const {
+        if (rhs.degenerate())
+            return *this;
+
+        if (this->degenerate())
+            return rhs;
+
+        real center_dist = (rhs.mCenter - mCenter).length();
+        if (center_dist + mRadius <= rhs.mRadius)
+            return rhs;
+        if (center_dist + rhs.mRadius <= mRadius)
+            return *this;
+
+        real new_radius = (mRadius + center_dist + rhs.mRadius) * 0.5;
+        real ratio = (new_radius - mRadius) / center_dist;
+        CoordType new_center = mCenter + (rhs.mCenter - mCenter) * ratio;
+        return BoundingSphere(new_center, new_radius);
+    }
+
+    bool contains(const BoundingSphere& other) const {
+        real centers_len = (mCenter - other.mCenter).length();
+        return (mRadius >= centers_len + other.mRadius);
+    }
+
+    bool degenerate() const {
+        return ( mRadius <= 0 );
+    }
+
+    real volume() const {
+        if (degenerate()) return 0.0;
+        return 4.0 / 3.0 * Pi * mRadius * mRadius * mRadius;
+    }
+
+    bool operator==(const BoundingSphere& rhs) {
+        return (mCenter == rhs.mCenter && mRadius == rhs.mRadius);
+    }
+    bool operator!=(const BoundingSphere& rhs) {
+        return (mCenter != rhs.mCenter || mRadius != rhs.mRadius);
+    }
 private:
     CoordType mCenter;
     real mRadius;

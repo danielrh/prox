@@ -94,8 +94,13 @@ void GLRenderer::queryHasEvents(Query* query) {
     query->popEvents(evts);
 
     for(std::deque<QueryEvent>::iterator it = evts.begin(); it != evts.end(); it++) {
-        if (mSeenObjects.find(it->id()) == mSeenObjects.end())
-            mSeenObjects.insert(it->id());
+        if (it->type() == QueryEvent::Added) {
+            if (mSeenObjects.find(it->id()) == mSeenObjects.end())
+                mSeenObjects.insert(it->id());
+        }
+        else {
+            mSeenObjects.erase(it->id());
+        }
     }
 }
 
@@ -165,6 +170,7 @@ void GLRenderer::reshape(int w, int h) {
 
 void GLRenderer::timer() {
     mTime += Duration::milliseconds(static_cast<uint32>(10));
+    //mSeenObjects.clear();
     mSimulator->tick(mTime);
     glutTimerFunc(16, glut_timer, 0);
     glutPostRedisplay();

@@ -48,6 +48,7 @@ class BoundingSphere;
 template<typename CoordType>
 class BoundingBox {
 public:
+    typedef typename CoordType::real real;
     static const uint8 size = CoordType::size;
 
     BoundingBox()
@@ -64,8 +65,7 @@ public:
 
     BoundingBox(const BoundingSphere<CoordType>& sphere)
     {
-        typedef typename CoordType::real realType;
-        realType offdim = (realType) sqrt( sphere.radius()*sphere.radius() / size );
+        real offdim = (real) sqrt( sphere.radius()*sphere.radius() / size );
         CoordType offvector(offdim);
         mMin = sphere.center() - offvector;
         mMax = sphere.center() + offvector;
@@ -93,14 +93,31 @@ public:
         return *this;
     }
 
-    BoundingBox merge(const BoundingBox& rhs) {
+    BoundingBox merge(const BoundingBox& rhs) const {
         return BoundingBox(mMin.min(rhs.mMin), mMax.max(rhs.mMax));
+    }
+
+    BoundingBox intersection(const BoundingBox& rhs) const {
+        return BoundingBox(mMin.max(rhs.mMin), mMax.min(rhs.mMin));
     }
 
     bool degenerate() const {
         for(int i = 0; i < size; i++)
             if (mMin[i] > mMax[i]) return true;
         return false;
+    }
+
+    real volume() const {
+        if (degenerate()) return 0.0;
+        CoordType diag = mMax - mMin;
+        return (diag.x * diag.y * diag.z);
+    }
+
+    bool operator==(const BoundingBox& rhs) {
+        return (mMin == rhs.mMin && mMax == rhs.mMax);
+    }
+    bool operator!=(const BoundingBox& rhs) {
+        return (mMin != rhs.mMin || mMax != rhs.mMax);
     }
 
 private:
