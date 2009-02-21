@@ -63,7 +63,7 @@ public:
 
 private:
     void insert(Object* obj, const Time& t);
-    bool satisfiesConstraints(const Vector3f& qpos, const float qradius, const SolidAngle& qangle, const Vector3f& opos, const BoundingSphere3f& obounds);
+    bool satisfiesConstraints(const Vector3f& qpos, const float qradius, const SolidAngle& qangle, const BoundingSphere3f& obounds);
 
     struct QueryState {
         QueryCache cache;
