@@ -1,4 +1,4 @@
-/*  Sirikata Utilities -- Math Library
+/*  Prox Utilities -- Math Library
  *  Vector3.hpp
  *
  *  Copyright (c) 2009, Daniel Reiter Horn
@@ -29,8 +29,8 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SIRIKATA_VECTOR3_HPP_
-#define _SIRIKATA_VECTOR3_HPP_
+#ifndef _PROX_VECTOR3_HPP_
+#define _PROX_VECTOR3_HPP_
 
 #include <prox/Platform.hpp>
 #include <assert.h>

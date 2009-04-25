@@ -1,4 +1,4 @@
-/*  Sirikata Utilities -- Math Library
+/*  Prox Utilities -- Math Library
  *  Vector4.hpp
  *
  *  Copyright (c) 2009, Daniel Reiter Horn
@@ -30,8 +30,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SIRIKATA_VECTOR4_HPP_
-#define _SIRIKATA_VECTOR4_HPP_
+#ifndef _PROX_VECTOR4_HPP_
+#define _PROX_VECTOR4_HPP_
 
 #include <prox/Platform.hpp>
 #include <sstream>
@@ -216,4 +216,4 @@ typedef Vector4<float64> Vector4d;
 
 }
 
-#endif //_SIRIKATA_VECTOR4_HPP_
+#endif //_PROX_VECTOR4_HPP_

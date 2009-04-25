@@ -1,4 +1,4 @@
-/*  Sirikata Utilities -- Math Library
+/*  Prox Utilities -- Math Library
  *  Quaternion.hpp
  *
  *  Copyright (c) 2009, Daniel Reiter Horn
@@ -29,8 +29,8 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _QUATERNION_HPP_
-#define _QUATERNION_HPP_
+#ifndef _PROX_QUATERNION_HPP_
+#define _PROX_QUATERNION_HPP_
 #include <prox/Vector3.hpp>
 #include <prox/Vector4.hpp>
 namespace Prox {
