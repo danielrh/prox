@@ -66,8 +66,13 @@ void Simulator::initialize(const Time& t, const Prox::BoundingBox3f& region, int
     Vector3f region_extents = region.extents();
 
     for(int i = 0; i < nobjects; i++) {
+        mObjectIDSource++;
+        unsigned char oid_data[ObjectID::static_size]={0};
+        memcpy(oid_data,&mObjectIDSource,ObjectID::static_size<sizeof(mObjectIDSource)?ObjectID::static_size:sizeof(mObjectIDSource));
+        ObjectID oid(oid_data,ObjectID::static_size);;
+        
         Object* obj = new Object(
-            ObjectID(mObjectIDSource++),
+            ObjectID(oid_data,ObjectID::static_size),
             MotionVector3f(
                 t,
                 region_min + Vector3f(region_extents.x * randFloat(), region_extents.y * randFloat(), 0.f/*region_extents.z * randFloat()*/),

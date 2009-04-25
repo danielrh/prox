@@ -35,7 +35,9 @@
 #include <cmath>
 
 namespace Prox {
-
+const float SolidAngle::Pi = 3.1415926536f;
+const float SolidAngle::MinVal = 0.0f;
+const float SolidAngle::MaxVal = 4.0f*SolidAngle::Pi;
 const SolidAngle SolidAngle::Min = SolidAngle(SolidAngle::MinVal);
 const SolidAngle SolidAngle::Max = SolidAngle(SolidAngle::MaxVal);
 

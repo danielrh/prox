@@ -32,7 +32,11 @@
 
 #include "GLRenderer.hpp"
 #include "Simulator.hpp"
+#ifdef __APPLE__
+#include <glut.h>
+#else
 #include <GL/glut.h>
+#endif
 #include <cassert>
 
 using namespace Prox;

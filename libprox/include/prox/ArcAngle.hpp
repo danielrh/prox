@@ -37,7 +37,7 @@ namespace Prox {
 
 class ArcAngle {
 public:
-    static const float Pi = 3.14159f;
+    static const float Pi;
     static const ArcAngle Min;
     static const ArcAngle Max;
 
@@ -62,8 +62,8 @@ public:
     static ArcAngle min();
     static ArcAngle max();
 protected:
-    static const float MinVal = 0.0f;
-    static const float MaxVal = 2.0f * 3.14159f;
+    static const float MinVal;
+    static const float MaxVal;
 
     void clamp();
 

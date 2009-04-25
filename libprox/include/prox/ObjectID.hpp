@@ -38,22 +38,39 @@
 namespace Prox {
 
 class ObjectID {
+    enum {
+        UUID_SIZE = 16
+    };
 public:
-    ObjectID(int64 id)
-     : mID(id)
-    {}
+    enum {
+        static_size=UUID_SIZE
+    };
+    static const ObjectID& null() {
+        static unsigned char data[UUID_SIZE]={0};
+        static ObjectID retval (data,UUID_SIZE);
+        return retval;
+    }
+    ObjectID(void *data, int size)
+    { 
+        if (size==UUID_SIZE) {
+            memcpy(mID,data,UUID_SIZE);
+        }else {
+            memset(mID,0,UUID_SIZE);
+            assert(false);
+        }
+    }
 
     bool operator<(const ObjectID& rhs) const {
-        return mID < rhs.mID;
+        return memcmp(mID,rhs.mID,UUID_SIZE)<0;
     }
     bool operator==(const ObjectID& rhs) const {
-        return mID == rhs.mID;
+        return memcmp(mID,rhs.mID,UUID_SIZE)==0;
     }
-
+    
 private:
     ObjectID();
-
-    int64 mID;
+    
+    unsigned char mID[UUID_SIZE];
 }; // class ObjectID
 
 } // namespace Prox

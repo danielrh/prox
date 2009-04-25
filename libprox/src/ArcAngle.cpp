@@ -34,6 +34,9 @@
 #include <cassert>
 
 namespace Prox {
+const float ArcAngle::Pi =  3.1415926536;
+const float ArcAngle::MinVal = 0.0f;
+const float ArcAngle::MaxVal = 2.0f * ArcAngle::Pi;
 
 const ArcAngle ArcAngle::Min = ArcAngle(ArcAngle::MinVal);
 const ArcAngle ArcAngle::Max = ArcAngle(ArcAngle::MaxVal);

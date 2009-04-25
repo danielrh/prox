@@ -40,7 +40,7 @@ namespace Prox {
 
 class SolidAngle {
 public:
-    static const float Pi = 3.14159f;
+    static const float Pi;
     static const SolidAngle Min;
     static const SolidAngle Max;
 
@@ -73,8 +73,8 @@ public:
 
     float asFloat() const;
 protected:
-    static const float MinVal = 0.0f;
-    static const float MaxVal = 4.0f * 3.14159f;
+    static const float MinVal;
+    static const float MaxVal;
 
     void clamp();
 
