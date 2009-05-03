@@ -68,7 +68,10 @@ public:
     const CoordType& velocity() const {
         return mDirection;
     }
-
+    MotionVector& operator+=(const CoordType &offset) {
+        mStart+=offset;
+        return *this;
+    }
     void update(const Time& t, const CoordType& pos, const CoordType& vel) {
         assert(t > mTime);
         mTime = t;

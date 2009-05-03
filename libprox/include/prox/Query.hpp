@@ -66,6 +66,7 @@ public:
     void removeChangeListener(QueryChangeListener* listener);
 
     void setEventListener(QueryEventListener* listener);
+    void removeEventListener();
 
     void pushEvent(const QueryEvent& evt);
     void pushEvents(std::deque<QueryEvent>& evts);

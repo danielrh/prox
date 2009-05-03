@@ -59,7 +59,21 @@ public:
             assert(false);
         }
     }
+    
+    void *begin(){
+        return &mID[0];
+    }
+    void *end(){
+        return (&mID[0]+UUID_SIZE);
+    }
 
+    const void *begin()const{
+        return &mID[0];
+    }
+    const void *end()const {
+        return (&mID[0]+UUID_SIZE);
+    }
+    
     bool operator<(const ObjectID& rhs) const {
         return memcmp(mID,rhs.mID,UUID_SIZE)<0;
     }

@@ -106,6 +106,10 @@ void Query::setEventListener(QueryEventListener* listener) {
     mEventListener = listener;
 }
 
+void Query::removeEventListener() {
+    mEventListener = NULL;
+}
+
 void Query::pushEvent(const QueryEvent& evt) {
     {
         boost::mutex::scoped_lock lock(mEventQueueMutex);
