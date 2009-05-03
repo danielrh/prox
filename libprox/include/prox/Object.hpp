@@ -43,7 +43,9 @@ class ObjectChangeListener;
 
 class Object {
 public:
-    Object(const ObjectID& id, const MotionVector3f& c, const BoundingSphere3f& bs);
+    typedef MotionVector3f PositionVectorType;
+
+    Object(const ObjectID& id, const PositionVectorType& c, const BoundingSphere3f& bs);
     Object(const Object& cpy);
     ~Object();
 
@@ -57,10 +59,10 @@ public:
 
     void addChangeListener(ObjectChangeListener* listener);
     void removeChangeListener(ObjectChangeListener* listener);
-
 protected:
+
     ObjectID mID;
-    MotionVector3f mPosition;
+    PositionVectorType mPosition;
     BoundingSphere3f mBounds;
 
     typedef std::list<ObjectChangeListener*> ChangeListenerList;

@@ -50,7 +50,7 @@ public:
         static ObjectID retval (data,UUID_SIZE);
         return retval;
     }
-    ObjectID(void *data, int size)
+    ObjectID(const void *data, int size)
     { 
         if (size==UUID_SIZE) {
             memcpy(mID,data,UUID_SIZE);

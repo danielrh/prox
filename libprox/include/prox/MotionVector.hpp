@@ -39,9 +39,11 @@
 
 namespace Prox {
 
-template<typename CoordType>
+template<typename CoordType_t>
 class MotionVector {
 public:
+    typedef CoordType_t CoordType;
+
     MotionVector(const Time& t, const CoordType& pos, const CoordType& vel)
      : mTime(t), mStart(pos), mDirection(vel)
     {
@@ -73,7 +75,6 @@ public:
         mStart = pos;
         mDirection = vel;
     }
-
 private:
     MotionVector();
 

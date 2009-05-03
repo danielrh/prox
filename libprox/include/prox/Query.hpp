@@ -46,6 +46,8 @@ class QueryEventListener;
 
 class Query {
 public:
+    typedef MotionVector3f PositionVectorType;
+
     const static float InfiniteRadius;
 
     Query(const MotionVector3f& pos, const SolidAngle& minAngle);
@@ -68,11 +70,12 @@ public:
     void pushEvent(const QueryEvent& evt);
     void pushEvents(std::deque<QueryEvent>& evts);
     void popEvents(std::deque<QueryEvent>& evts);
+
 protected:
     Query();
     void notifyEventListeners();
 
-    MotionVector3f mPosition;
+    PositionVectorType mPosition;
     SolidAngle mMinSolidAngle;
     float mMaxRadius;
 
