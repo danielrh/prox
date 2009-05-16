@@ -73,7 +73,7 @@ void BruteForceQueryHandler::tick(const Time& t) {
             Object* obj = *obj_it;
 
             // Must satisfy radius constraint
-            if (query->radius() != Query::InfiniteRadius && (obj->position(t)-query->position(t)).lengthSquared() < query->radius()*query->radius())
+            if (query->radius() != Query::InfiniteRadius && (obj->position(t)-query->position(t)).lengthSquared() > query->radius()*query->radius())
                 continue;
 
             // Must satisfy solid angle constraint

@@ -53,14 +53,16 @@ Query::Query(const MotionVector3f& pos, const SolidAngle& minAngle)
 Query::Query(const MotionVector3f& pos, const SolidAngle& minAngle, float radius)
  : mPosition(pos),
    mMinSolidAngle(minAngle),
-   mMaxRadius(radius)
+   mMaxRadius(radius),
+   mNotified(false)
 {
 }
 
 Query::Query(const Query& cpy)
  : mPosition(cpy.mPosition),
    mMinSolidAngle(cpy.mMinSolidAngle),
-   mMaxRadius(cpy.mMaxRadius)
+   mMaxRadius(cpy.mMaxRadius),
+   mNotified(false)
 {
 }
 
