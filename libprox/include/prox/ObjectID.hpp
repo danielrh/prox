@@ -53,9 +53,9 @@ public:
     ObjectID(const void *data, int size)
     { 
         if (size==UUID_SIZE) {
-            memcpy(mID,data,UUID_SIZE);
+            std::memcpy(mID,data,UUID_SIZE);
         }else {
-            memset(mID,0,UUID_SIZE);
+            std::memset(mID,0,UUID_SIZE);
             assert(false);
         }
     }
@@ -75,10 +75,10 @@ public:
     }
     
     bool operator<(const ObjectID& rhs) const {
-        return memcmp(mID,rhs.mID,UUID_SIZE)<0;
+        return std::memcmp(mID,rhs.mID,UUID_SIZE)<0;
     }
     bool operator==(const ObjectID& rhs) const {
-        return memcmp(mID,rhs.mID,UUID_SIZE)==0;
+        return std::memcmp(mID,rhs.mID,UUID_SIZE)==0;
     }
     
 private:

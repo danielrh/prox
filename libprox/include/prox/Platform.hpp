@@ -71,8 +71,9 @@
 # define LIBPROX_EXPORT_C extern "C" LIBPROX_EXPORT
 #endif
 
-#include <string>
+#include <cstring>
 #include <cassert>
+#include <string>
 #include <map>
 #include <list>
 #include <vector>
