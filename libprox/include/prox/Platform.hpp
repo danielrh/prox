@@ -71,6 +71,7 @@
 # define LIBPROX_EXPORT_C extern "C" LIBPROX_EXPORT
 #endif
 
+#include <stdint.h>
 #include <cstring>
 #include <cassert>
 #include <string>

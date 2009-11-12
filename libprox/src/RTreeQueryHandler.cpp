@@ -368,10 +368,9 @@ void RTree_verify_bounds(RTreeNode* root, const Time& t) {
 //        if (root->bounds().merge(root->leaf() ? root->object(i)->bounds() : root->node(i)->bounds()) != root->bounds())
         if (!root->bounds().contains( root->leaf() ? root->object(i)->worldBounds(t) : root->node(i)->bounds() )) {
             const BoundingSphere3f& child_bs = root->leaf() ? root->object(i)->worldBounds(t) : root->node(i)->bounds();
-            printf("child exceeds bounds %s %f\n",
-                (root->leaf() ? "object" : "node"),
-                root->bounds().radius() - ((root->bounds().center() - child_bs.center()).length() + child_bs.radius())
-            );
+            std::cout << "child exceeds bounds " <<
+                (root->leaf() ? "object" : "node") <<
+                (root->bounds().radius() - ((root->bounds().center() - child_bs.center()).length() + child_bs.radius())) << std::endl;
         }
     if (!root->leaf()) {
         for(int i = 0; i < root->size(); i++)
@@ -470,7 +469,7 @@ void RTreeQueryHandler::tick(const Time& t) {
 
         query->pushEvents(events);
     }
-    printf("count: %d %d\n", count, ncount);
+    std::cout << "count: " << count << " " << ncount << std::endl;
     mLastTime = t;
 }
 
