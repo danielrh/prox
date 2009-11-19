@@ -70,8 +70,9 @@
 #ifndef LIBPROX_EXPORT_C
 # define LIBPROX_EXPORT_C extern "C" LIBPROX_EXPORT
 #endif
-
+#if LIBPROX_PLATFORM != PLATFORM_WINDOWS
 #include <stdint.h>
+#endif
 #include <cstring>
 #include <cassert>
 #include <string>
