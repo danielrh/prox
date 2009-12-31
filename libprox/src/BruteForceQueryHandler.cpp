@@ -104,8 +104,10 @@ void BruteForceQueryHandler::objectBoundingSphereUpdated(Object* obj, const Boun
 }
 
 void BruteForceQueryHandler::objectDeleted(const Object* obj) {
-    assert( mObjects.find(const_cast<Object*>(obj)) != mObjects.end() );
-    mObjects.erase(const_cast<Object*>(obj));
+    ObjectSet::iterator where=mObjects.find(const_cast<Object*>(obj));
+    assert( where != mObjects.end() );
+    (*where)->removeChangeListener(this);
+    mObjects.erase(where);
 }
 
 void BruteForceQueryHandler::queryPositionUpdated(Query* query, const MotionVector3f& old_pos, const MotionVector3f& new_pos) {

@@ -56,7 +56,7 @@ public:
     BoundingSphere3f worldBounds(const Time& t) const;
     void position(const MotionVector3f& new_pos);
     void bounds(const BoundingSphere3f& new_bounds);
-
+    void unregister();
     void addChangeListener(ObjectChangeListener* listener);
     void removeChangeListener(ObjectChangeListener* listener);
 protected:

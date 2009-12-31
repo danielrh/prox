@@ -51,10 +51,14 @@ Object::Object(const Object& cpy)
 }
 
 Object::~Object() {
-    for(ChangeListenerList::iterator it = mChangeListeners.begin(); it != mChangeListeners.end(); it++)
-        (*it)->objectDeleted(this);
+    unregister();
 }
-
+void Object::unregister() {
+    for(ChangeListenerList::iterator it = mChangeListeners.begin(),mfd; it != mChangeListeners.end();) {
+        mfd=it++;
+        (*mfd)->objectDeleted(this);    
+    }
+}
 const ObjectID& Object::id() const {
     return mID;
 }
